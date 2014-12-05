@@ -9,7 +9,7 @@
 bool init();
 
 //Loads media
-bool loadMedia();
+bool loadMedia(Tile* tiles[]);
 
 LTexture gTileTexture;
 
@@ -64,7 +64,7 @@ int main(int argc, char* args[])
 	{
 		Tile* tileSet[TOTAL_TILES];
 
-		if (!loadMedia())
+		if (!loadMedia( tileSet))
 		{
 			std::cout << "Failed to load media!" << std::endl;
 		}
@@ -113,7 +113,7 @@ int main(int argc, char* args[])
 
 
 		close(tileSet);
-		//system("pause");
+		system("pause");
 		return 0;
 	}
 }
@@ -183,14 +183,28 @@ bool init()
 			}
 		}
 	}
-
+	
 	return success;
 }
 
-bool loadMedia()
+bool loadMedia(Tile* tiles[])
 {
 	//Loading success flag
 	bool success = true;
+
+	//Load dot texture
+	if (!gDotTexture.loadFromFile("dot.bmp"))
+	{
+		printf("Failed to load dot texture!\n");
+		success = false;
+	}
+
+	//Load tile texture
+	if (!gTileTexture.loadFromFile("tiles.png"))
+	{
+		printf("Failed to load tile set texture!\n");
+		success = false;
+	}
 
 	if (!gSpriteSheetTexture.loadFromFile("sprites.png"))
 	{
@@ -224,6 +238,12 @@ bool loadMedia()
 		gSpriteClips[3].h = TILE_HEIGHT;
 
 
+	}
+	//Load tile map
+	if (!setTiles(tiles))
+	{
+		printf("Failed to load tile set!\n");
+		success = false;
 	}
 	//Load default surface
 	/*gKeyPressSurfaces[0] = loadSurface("room1.jpg");
@@ -468,7 +488,7 @@ bool setTiles(Tile* tiles[])
 	int x = 0, y = 0;
 
 	//Open the map
-	std::ifstream map("39_tiling/lazy.map");
+	std::ifstream map("lazy.map");
 
 	//If the map couldn't be loaded
 	if (!map.is_open())
