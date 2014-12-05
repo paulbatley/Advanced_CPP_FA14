@@ -113,7 +113,7 @@ int main(int argc, char* args[])
 
 
 		close(tileSet);
-		system("pause");
+		//system("pause");
 		return 0;
 	}
 }
@@ -200,7 +200,7 @@ bool loadMedia(Tile* tiles[])
 	}
 
 	//Load tile texture
-	if (!gTileTexture.loadFromFile("tiles.png"))
+	if (!gTileTexture.loadFromFile("tiles1.png"))
 	{
 		printf("Failed to load tile set texture!\n");
 		success = false;
@@ -464,7 +464,7 @@ bool touchesWall(SDL_Rect box, Tile* tiles[])
 	for (int i = 0; i < TOTAL_TILES; ++i)
 	{
 		//If the tile is a wall type tile
-		if ((tiles[i]->getType() >= TILE_CENTER) && (tiles[i]->getType() <= TILE_TOPLEFT))
+		if ((tiles[i]->getType() >= TILE_BOTTOMRIGHT) && (tiles[i]->getType() <= TILE_BOTTOMRIGHT))
 		{
 			//If the collision box touches the wall tile
 			if (checkCollision(box, tiles[i]->getBox()))
@@ -547,63 +547,48 @@ bool setTiles(Tile* tiles[])
 		//Clip the sprite sheet
 		if (tilesLoaded)
 		{
-			gTileClips[TILE_RED].x = 0;
-			gTileClips[TILE_RED].y = 0;
-			gTileClips[TILE_RED].w = TILE_WIDTH;
-			gTileClips[TILE_RED].h = TILE_HEIGHT;
+			gTileClips[TILE_UPDOOR].x = 0;
+			gTileClips[TILE_UPDOOR].y = 0;
+			gTileClips[TILE_UPDOOR].w = TILE_WIDTH;
+			gTileClips[TILE_UPDOOR].h = TILE_HEIGHT;
 
-			gTileClips[TILE_GREEN].x = 0;
-			gTileClips[TILE_GREEN].y = 80;
-			gTileClips[TILE_GREEN].w = TILE_WIDTH;
-			gTileClips[TILE_GREEN].h = TILE_HEIGHT;
+			gTileClips[TILE_LEFTDOOR].x = 0;
+			gTileClips[TILE_LEFTDOOR].y = 40;
+			gTileClips[TILE_LEFTDOOR].w = TILE_WIDTH;
+			gTileClips[TILE_LEFTDOOR].h = TILE_HEIGHT;
 
-			gTileClips[TILE_BLUE].x = 0;
-			gTileClips[TILE_BLUE].y = 160;
-			gTileClips[TILE_BLUE].w = TILE_WIDTH;
-			gTileClips[TILE_BLUE].h = TILE_HEIGHT;
+			gTileClips[TILE_RIGHTDOOR].x = 0;
+			gTileClips[TILE_RIGHTDOOR].y = 80;
+			gTileClips[TILE_RIGHTDOOR].w = TILE_WIDTH;
+			gTileClips[TILE_RIGHTDOOR].h = TILE_HEIGHT;
+			
+			gTileClips[TILE_BOTTOMDOOR].x = 40;
+			gTileClips[TILE_BOTTOMDOOR].y = 0;
+			gTileClips[TILE_BOTTOMDOOR].w = TILE_WIDTH;
+			gTileClips[TILE_BOTTOMDOOR].h = TILE_HEIGHT;
 
-			gTileClips[TILE_TOPLEFT].x = 80;
-			gTileClips[TILE_TOPLEFT].y = 0;
-			gTileClips[TILE_TOPLEFT].w = TILE_WIDTH;
-			gTileClips[TILE_TOPLEFT].h = TILE_HEIGHT;
+			gTileClips[TILE_WALK].x = 40;
+			gTileClips[TILE_WALK].y = 40;
+			gTileClips[TILE_WALK].w = TILE_WIDTH;
+			gTileClips[TILE_WALK].h = TILE_HEIGHT;
 
-			gTileClips[TILE_LEFT].x = 80;
-			gTileClips[TILE_LEFT].y = 80;
-			gTileClips[TILE_LEFT].w = TILE_WIDTH;
-			gTileClips[TILE_LEFT].h = TILE_HEIGHT;
+			gTileClips[TILE_BOTTOMCEN].x = 40;
+			gTileClips[TILE_BOTTOMCEN].y = 80;
+			gTileClips[TILE_BOTTOMCEN].w = TILE_WIDTH;
+			gTileClips[TILE_BOTTOMCEN].h = TILE_HEIGHT;
 
-			gTileClips[TILE_BOTTOMLEFT].x = 80;
-			gTileClips[TILE_BOTTOMLEFT].y = 160;
-			gTileClips[TILE_BOTTOMLEFT].w = TILE_WIDTH;
-			gTileClips[TILE_BOTTOMLEFT].h = TILE_HEIGHT;
-
-			gTileClips[TILE_TOP].x = 160;
-			gTileClips[TILE_TOP].y = 0;
-			gTileClips[TILE_TOP].w = TILE_WIDTH;
-			gTileClips[TILE_TOP].h = TILE_HEIGHT;
-
-			gTileClips[TILE_CENTER].x = 160;
-			gTileClips[TILE_CENTER].y = 80;
-			gTileClips[TILE_CENTER].w = TILE_WIDTH;
-			gTileClips[TILE_CENTER].h = TILE_HEIGHT;
-
-			gTileClips[TILE_BOTTOM].x = 160;
-			gTileClips[TILE_BOTTOM].y = 160;
-			gTileClips[TILE_BOTTOM].w = TILE_WIDTH;
-			gTileClips[TILE_BOTTOM].h = TILE_HEIGHT;
-
-			gTileClips[TILE_TOPRIGHT].x = 240;
+			gTileClips[TILE_TOPRIGHT].x = 80;
 			gTileClips[TILE_TOPRIGHT].y = 0;
 			gTileClips[TILE_TOPRIGHT].w = TILE_WIDTH;
 			gTileClips[TILE_TOPRIGHT].h = TILE_HEIGHT;
 
-			gTileClips[TILE_RIGHT].x = 240;
-			gTileClips[TILE_RIGHT].y = 80;
-			gTileClips[TILE_RIGHT].w = TILE_WIDTH;
-			gTileClips[TILE_RIGHT].h = TILE_HEIGHT;
+			gTileClips[TILE_CENRIGHT].x = 80;
+			gTileClips[TILE_CENRIGHT].y = 40;
+			gTileClips[TILE_CENRIGHT].w = TILE_WIDTH;
+			gTileClips[TILE_CENRIGHT].h = TILE_HEIGHT;
 
-			gTileClips[TILE_BOTTOMRIGHT].x = 240;
-			gTileClips[TILE_BOTTOMRIGHT].y = 160;
+			gTileClips[TILE_BOTTOMRIGHT].x = 80;
+			gTileClips[TILE_BOTTOMRIGHT].y = 80;
 			gTileClips[TILE_BOTTOMRIGHT].w = TILE_WIDTH;
 			gTileClips[TILE_BOTTOMRIGHT].h = TILE_HEIGHT;
 		}
