@@ -2,6 +2,7 @@
 
 
 
+
 boardMember::boardMember()
 {
 	level = 0;
@@ -31,7 +32,6 @@ Allie::~Allie()
 
 Foe::Foe()
 {
-
 	xPos = 0;
 	yPos = 0;
 	std::cout << "Foe created\n";
@@ -40,7 +40,6 @@ Foe::Foe()
 Foe::~Foe()
 {
 	std::cout << " foe has been obliviated\n";
-
 }
 
 int Foe::XPgiven(Foe deadDude)
@@ -110,3 +109,72 @@ LTexture::~LTexture()
 	//Deallocate
 	free();
 }
+
+Dot::Dot()
+{
+	//Initialize the collision box
+	mBox.x = 0;
+	mBox.y = 0;
+	mBox.w = DOT_WIDTH;
+	mBox.h = DOT_HEIGHT;
+
+	//Initialize the velocity
+	mVelX = 0;
+	mVelY = 0;
+}
+
+Tile::Tile(int x, int y, int tileType)
+{
+	//Get the offsets
+	mBox.x = x;
+	mBox.y = y;
+
+	//Set the collision box
+	mBox.w = TILE_WIDTH;
+	mBox.h = TILE_HEIGHT;
+
+	//Get the tile type
+	mType = tileType;
+}
+
+
+
+void Dot::handleEvent(SDL_Event& e)
+{
+	//If a key was pressed
+	if (e.type == SDL_KEYDOWN && e.key.repeat == 0)
+	{
+		//Adjust the velocity
+		switch (e.key.keysym.sym)
+		{
+		case SDLK_UP: mVelY -= DOT_VEL; break;
+		case SDLK_DOWN: mVelY += DOT_VEL; break;
+		case SDLK_LEFT: mVelX -= DOT_VEL; break;
+		case SDLK_RIGHT: mVelX += DOT_VEL; break;
+		}
+	}
+	//If a key was released
+	else if (e.type == SDL_KEYUP && e.key.repeat == 0)
+	{
+		//Adjust the velocity
+		switch (e.key.keysym.sym)
+		{
+		case SDLK_UP: mVelY += DOT_VEL; break;
+		case SDLK_DOWN: mVelY -= DOT_VEL; break;
+		case SDLK_LEFT: mVelX += DOT_VEL; break;
+		case SDLK_RIGHT: mVelX -= DOT_VEL; break;
+		}
+	}
+}
+
+SDL_Rect Tile::getBox()
+{
+	return mBox;
+}
+
+int Tile::getType()
+{
+	return mType;
+}
+
+

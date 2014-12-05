@@ -11,157 +11,111 @@ bool init();
 //Loads media
 bool loadMedia();
 
+LTexture gTileTexture;
+
+SDL_Rect gTileClips[TOTAL_TILE_SPRITES];
+
 //Frees media and shuts down SDL
-void close();
+void close(Tile* tiles[]);
 
 //The window renderer
 SDL_Renderer* gRenderer = NULL;
 //The window we'll be rendering to
 SDL_Window* gWindow = NULL;
 
+
+LTexture gDotTexture;
 //contains sprites
 SDL_Rect gSpriteClips[4];
 
 LTexture gSpriteSheetTexture;
 
+//Loads individual image
+SDL_Surface* loadSurface(std::string path);
+
+//The surface contained by the window
+SDL_Surface* gScreenSurface = NULL;
+
+
+//Current displayed image
+SDL_Surface* gCurrentSurface = NULL;
+
+
+//The images that correspond to a keypress
+SDL_Surface* gKeyPressSurfaces[1];
+
+
 
 int boardPositionX = SCREEN_WIDTH;
 int boardPositionY = SCREEN_HEIGHT;
+
+
 
 bool hitSuccess(boardMember Attacker);
 
 int main(int argc, char* args[])
 {
-	Allie A1;
-	std::cout << A1.expUP(200) << std::endl;
-	std::cout << A1.checkForLvlUp() << std::endl;
-	std::cout << A1.expUP(200) << std::endl;
-	std::cout << A1.checkForLvlUp() << std::endl;
-	A1.statSet(10, 3, 2, 2);
-	std::cout << A1.getHP() << std::endl;
 
-	Foe F1;
-	//x tile #, y tile #
-	F1.statSet(5, 2, 1, 1);
-	F1.setCoor(5, 7);
-	F1.setLvl(5);
 	if (!init())
 	{
 		std::cout << "Initialization failed!" << std::endl;
-
 	}
 	else
 	{
+		Tile* tileSet[TOTAL_TILES];
+
 		if (!loadMedia())
 		{
 			std::cout << "Failed to load media!" << std::endl;
-
 		}
 		else
 		{
 			bool quit = false;
-			SDL_Event evnt;
+
+			SDL_Event e;
+
+			//The dot that will be moving around on the screen
+			Dot dot;
 
 			while (!quit)
 			{
 				//event que
-				while (SDL_PollEvent(&evnt) != 0)
+				while (SDL_PollEvent(&e) != 0)
 				{
 
-					if (evnt.type == SDL_QUIT)
+					if (e.type == SDL_QUIT)
 					{
 						quit = true;
 					}
 					//key press event
-					else if (evnt.type == SDL_KEYDOWN)
-					{
-						//set board to black
-						SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xCC);
-						SDL_RenderClear(gRenderer);
 
-						//Select surfaces based on key press
-						switch (evnt.key.keysym.sym)
-						{
-						case SDLK_UP:
-							//move UP
-							if (boardPositionY <= tileSize)
-								boardPositionY = tileSize * 2;
-							gSpriteSheetTexture.render(boardPositionX - gSpriteClips[0].w, (boardPositionY -= tileSize) - gSpriteClips[0].h, &gSpriteClips[0]);
-							break;
-
-						case SDLK_DOWN:
-							//move DOWN
-							if (boardPositionY >= (SCREEN_HEIGHT - tileSize))
-								boardPositionY = SCREEN_HEIGHT - tileSize;
-							gSpriteSheetTexture.render(boardPositionX - gSpriteClips[0].w, (boardPositionY += tileSize) - gSpriteClips[1].h, &gSpriteClips[1]);
-							break;
-
-						case SDLK_LEFT:
-							//move LEFT
-							if (boardPositionX <= tileSize)
-								boardPositionX = tileSize * 2;
-							gSpriteSheetTexture.render((boardPositionX -= tileSize) - gSpriteClips[0].w, boardPositionY - gSpriteClips[2].h, &gSpriteClips[2]);
-							break;
-
-						case SDLK_RIGHT:
-							//move RIGHT
-							if (boardPositionX >= (SCREEN_WIDTH - tileSize))
-								boardPositionX = SCREEN_WIDTH - tileSize;
-							gSpriteSheetTexture.render((boardPositionX += tileSize) - gSpriteClips[0].w, boardPositionY - gSpriteClips[0].h, &gSpriteClips[0]);
-							break;
-
-						default:
-							//do nothing				
-
-							break;
-						}
-						if (boardPositionX == F1.getXpos() && boardPositionY == F1.getYpos())
-						{
-							if (hitSuccess(F1))
-							{
-								std::cout << "Allie Attacked!\n";
-								A1.decHP(F1.ATKcalc(A1));
-								std::cout << A1.getHP() << std::endl;
-								if (A1.getHP() <= 0)
-								{
-									std::cout << "You are dead\n";
-									quit = true;
-								}
-							}
-
-							gSpriteSheetTexture.render(F1.getXpos() - gSpriteClips[3].w, F1.getYpos() - gSpriteClips[3].h, &gSpriteClips[3]);
-							SDL_RenderPresent(gRenderer);
-						}
-
-					}
+					dot.handleEvent(e);
 
 				}
+				dot.move(tileSet);
 
-
-
-
-				//set color to white for grid
+				//Clear screen
 				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-				//draw a grid of tiles: spacing determined by the tileSize variable
-				for (int i = 0; i < SCREEN_HEIGHT; i += tileSize)
+				SDL_RenderClear(gRenderer);
+
+				//Render level
+				for (int i = 0; i < TOTAL_TILES; ++i)
 				{
-					SDL_RenderDrawLine(gRenderer, 0, i, SCREEN_WIDTH, i);
-				}
-				for (int i = 0; i < SCREEN_WIDTH; i += tileSize)
-				{
-					SDL_RenderDrawLine(gRenderer, i, 0, i, SCREEN_HEIGHT);
+					tileSet[i]->render();
 				}
 
+				dot.render();
 
 				SDL_RenderPresent(gRenderer);
 
 			}
 		}
 
+
+		close(tileSet);
+		//system("pause");
+		return 0;
 	}
-	close();
-	//system("pause");
-	return 0;
 }
 
 bool hitSuccess(boardMember Attacker)
@@ -207,6 +161,7 @@ bool init()
 		{
 			//Create renderer for window
 			gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
+		//	gScreenSurface = SDL_GetWindowSurface(gWindow);
 			if (gRenderer == NULL)
 			{
 				std::cout << "Renderer could not be created! SDL Error:" << SDL_GetError() << std::endl;
@@ -247,35 +202,56 @@ bool loadMedia()
 		//Set  first sprite
 		gSpriteClips[0].x = 0;
 		gSpriteClips[0].y = 0;
-		gSpriteClips[0].w = tileSize;
-		gSpriteClips[0].h = tileSize;
+		gSpriteClips[0].w = TILE_WIDTH;
+		gSpriteClips[0].h = TILE_HEIGHT;
 
 		//Set second sprite
-		gSpriteClips[1].x = tileSize;
+		gSpriteClips[1].x = TILE_WIDTH;
 		gSpriteClips[1].y = 0;
-		gSpriteClips[1].w = tileSize;
-		gSpriteClips[1].h = tileSize;
+		gSpriteClips[1].w = TILE_WIDTH;
+		gSpriteClips[1].h = TILE_HEIGHT;
 
 		//Set third sprite
 		gSpriteClips[2].x = 0;
-		gSpriteClips[2].y = tileSize;
-		gSpriteClips[2].w = tileSize;
-		gSpriteClips[2].h = tileSize;
+		gSpriteClips[2].y = TILE_HEIGHT;
+		gSpriteClips[2].w = TILE_WIDTH;
+		gSpriteClips[2].h = TILE_HEIGHT;
 
 		//set the Foe sprite
-		gSpriteClips[3].x = tileSize;
-		gSpriteClips[3].y = tileSize;
-		gSpriteClips[3].w = tileSize;
-		gSpriteClips[3].h = tileSize;
+		gSpriteClips[3].x = TILE_WIDTH;
+		gSpriteClips[3].y = TILE_HEIGHT;
+		gSpriteClips[3].w = TILE_WIDTH;
+		gSpriteClips[3].h = TILE_HEIGHT;
 
 
 	}
+	//Load default surface
+	/*gKeyPressSurfaces[0] = loadSurface("room1.jpg");
+	if (gKeyPressSurfaces[0] == NULL)
+	{
+		printf("Failed to load default image!\n");
+		success = false;
+	}*/
 	//sprites to load
 	return success;
 }
 
-void close()
+void close(Tile* tiles[])
 {
+	//Deallocate tiles
+	for (int i = 0; i < TOTAL_TILES; ++i)
+	{
+		if (tiles[i] == NULL)
+		{
+			delete tiles[i];
+			tiles[i] = NULL;
+		}
+	}
+
+	//Free loaded images
+	gDotTexture.free();
+	gTileTexture.free();
+
 
 	//Destroy window	
 	SDL_DestroyRenderer(gRenderer);
@@ -329,6 +305,18 @@ bool LTexture::loadFromFile(std::string path)
 	return mTexture != NULL;
 }
 
+//SDL_Surface* loadSurface(std::string path)
+//{
+//	//Load image at specified path
+//	SDL_Surface* loadedSurface = SDL_LoadBMP(path.c_str());
+//	if (loadedSurface == NULL)
+//	{
+//		printf("Unable to load image %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
+//	}
+//
+//	return loadedSurface;
+//}
+
 void LTexture::free()
 {
 	//Free texture if it exists
@@ -367,3 +355,243 @@ int LTexture::getHeight()
 	return mHeight;
 }
 
+void Dot::render()
+{
+	//Show the dot
+	gDotTexture.render(mBox.x, mBox.y);
+
+}
+
+void Dot::move(Tile *tiles[])
+{
+	//Move the dot left or right
+	mBox.x += mVelX;
+
+	//If the dot went too far to the left or right or touched a wall
+	if ((mBox.x < 0) || (mBox.x + DOT_WIDTH > SCREEN_WIDTH) || touchesWall(mBox, tiles))
+	{
+		//move back
+		mBox.x -= mVelX;
+	}
+
+	//Move the dot up or down
+	mBox.y += mVelY;
+
+	//If the dot went too far up or down or touched a wall
+	if ((mBox.y < 0) || (mBox.y + DOT_HEIGHT > SCREEN_HEIGHT) || touchesWall(mBox, tiles))
+	{
+		//move back
+		mBox.y -= mVelY;
+	}
+}
+
+void Tile::render()
+{
+	//Show the tile
+	gTileTexture.render(mBox.x, mBox.y, &gTileClips[mType]);
+
+}
+
+bool checkCollision(SDL_Rect a, SDL_Rect b)
+{
+	//The sides of the rectangles
+	int leftA, leftB;
+	int rightA, rightB;
+	int topA, topB;
+	int bottomA, bottomB;
+
+	//Calculate the sides of rect A
+	leftA = a.x;
+	rightA = a.x + a.w;
+	topA = a.y;
+	bottomA = a.y + a.h;
+
+	//Calculate the sides of rect B
+	leftB = b.x;
+	rightB = b.x + b.w;
+	topB = b.y;
+	bottomB = b.y + b.h;
+
+	//If any of the sides from A are outside of B
+	if (bottomA <= topB)
+	{
+		return false;
+	}
+
+	if (topA >= bottomB)
+	{
+		return false;
+	}
+
+	if (rightA <= leftB)
+	{
+		return false;
+	}
+
+	if (leftA >= rightB)
+	{
+		return false;
+	}
+
+	//If none of the sides from A are outside B
+	return true;
+}
+
+
+bool touchesWall(SDL_Rect box, Tile* tiles[])
+{
+	//Go through the tiles
+	for (int i = 0; i < TOTAL_TILES; ++i)
+	{
+		//If the tile is a wall type tile
+		if ((tiles[i]->getType() >= TILE_CENTER) && (tiles[i]->getType() <= TILE_TOPLEFT))
+		{
+			//If the collision box touches the wall tile
+			if (checkCollision(box, tiles[i]->getBox()))
+			{
+				return true;
+			}
+		}
+	}
+
+	//If no wall tiles were touched
+	return false;
+}
+
+
+bool setTiles(Tile* tiles[])
+{
+	//Success flag
+	bool tilesLoaded = true;
+
+	//The tile offsets
+	int x = 0, y = 0;
+
+	//Open the map
+	std::ifstream map("39_tiling/lazy.map");
+
+	//If the map couldn't be loaded
+	if (!map.is_open())
+	{
+		printf("Unable to load map file!\n");
+		tilesLoaded = false;
+	}
+	else
+	{
+		//Initialize the tiles
+		for (int i = 0; i < TOTAL_TILES; ++i)
+		{
+			//Determines what kind of tile will be made
+			int tileType = -1;
+
+			//Read tile from map file
+			map >> tileType;
+
+			//If the was a problem in reading the map
+			if (map.fail())
+			{
+				//Stop loading map
+				printf("Error loading map: Unexpected end of file!\n");
+				tilesLoaded = false;
+				break;
+			}
+
+			//If the number is a valid tile number
+			if ((tileType >= 0) && (tileType < TOTAL_TILE_SPRITES))
+			{
+				tiles[i] = new Tile(x, y, tileType);
+			}
+			//If we don't recognize the tile type
+			else
+			{
+				//Stop loading map
+				printf("Error loading map: Invalid tile type at %d!\n", i);
+				tilesLoaded = false;
+				break;
+			}
+
+			//Move to next tile spot
+			x += TILE_WIDTH;
+
+			//If we've gone too far
+			if (x >= SCREEN_WIDTH)
+			{
+				//Move back
+				x = 0;
+
+				//Move to the next row
+				y += TILE_HEIGHT;
+			}
+		}
+
+		//Clip the sprite sheet
+		if (tilesLoaded)
+		{
+			gTileClips[TILE_RED].x = 0;
+			gTileClips[TILE_RED].y = 0;
+			gTileClips[TILE_RED].w = TILE_WIDTH;
+			gTileClips[TILE_RED].h = TILE_HEIGHT;
+
+			gTileClips[TILE_GREEN].x = 0;
+			gTileClips[TILE_GREEN].y = 80;
+			gTileClips[TILE_GREEN].w = TILE_WIDTH;
+			gTileClips[TILE_GREEN].h = TILE_HEIGHT;
+
+			gTileClips[TILE_BLUE].x = 0;
+			gTileClips[TILE_BLUE].y = 160;
+			gTileClips[TILE_BLUE].w = TILE_WIDTH;
+			gTileClips[TILE_BLUE].h = TILE_HEIGHT;
+
+			gTileClips[TILE_TOPLEFT].x = 80;
+			gTileClips[TILE_TOPLEFT].y = 0;
+			gTileClips[TILE_TOPLEFT].w = TILE_WIDTH;
+			gTileClips[TILE_TOPLEFT].h = TILE_HEIGHT;
+
+			gTileClips[TILE_LEFT].x = 80;
+			gTileClips[TILE_LEFT].y = 80;
+			gTileClips[TILE_LEFT].w = TILE_WIDTH;
+			gTileClips[TILE_LEFT].h = TILE_HEIGHT;
+
+			gTileClips[TILE_BOTTOMLEFT].x = 80;
+			gTileClips[TILE_BOTTOMLEFT].y = 160;
+			gTileClips[TILE_BOTTOMLEFT].w = TILE_WIDTH;
+			gTileClips[TILE_BOTTOMLEFT].h = TILE_HEIGHT;
+
+			gTileClips[TILE_TOP].x = 160;
+			gTileClips[TILE_TOP].y = 0;
+			gTileClips[TILE_TOP].w = TILE_WIDTH;
+			gTileClips[TILE_TOP].h = TILE_HEIGHT;
+
+			gTileClips[TILE_CENTER].x = 160;
+			gTileClips[TILE_CENTER].y = 80;
+			gTileClips[TILE_CENTER].w = TILE_WIDTH;
+			gTileClips[TILE_CENTER].h = TILE_HEIGHT;
+
+			gTileClips[TILE_BOTTOM].x = 160;
+			gTileClips[TILE_BOTTOM].y = 160;
+			gTileClips[TILE_BOTTOM].w = TILE_WIDTH;
+			gTileClips[TILE_BOTTOM].h = TILE_HEIGHT;
+
+			gTileClips[TILE_TOPRIGHT].x = 240;
+			gTileClips[TILE_TOPRIGHT].y = 0;
+			gTileClips[TILE_TOPRIGHT].w = TILE_WIDTH;
+			gTileClips[TILE_TOPRIGHT].h = TILE_HEIGHT;
+
+			gTileClips[TILE_RIGHT].x = 240;
+			gTileClips[TILE_RIGHT].y = 80;
+			gTileClips[TILE_RIGHT].w = TILE_WIDTH;
+			gTileClips[TILE_RIGHT].h = TILE_HEIGHT;
+
+			gTileClips[TILE_BOTTOMRIGHT].x = 240;
+			gTileClips[TILE_BOTTOMRIGHT].y = 160;
+			gTileClips[TILE_BOTTOMRIGHT].w = TILE_WIDTH;
+			gTileClips[TILE_BOTTOMRIGHT].h = TILE_HEIGHT;
+		}
+	}
+
+	//Close the file
+	map.close();
+
+	//If the map was loaded fine
+	return tilesLoaded;
+}

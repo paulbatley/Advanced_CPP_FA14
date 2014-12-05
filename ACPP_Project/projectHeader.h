@@ -8,11 +8,31 @@
 #include <string>
 #include <vector>
 #include <random>
+#include <fstream>
 
-const int tileSize = 20;
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
+const int TILE_WIDTH = 80;
+const int TILE_HEIGHT = 80;
+const int TOTAL_TILES = 48;
+const int TOTAL_TILE_SPRITES = 12;
 
+const int TILE_RED = 0;
+const int TILE_GREEN = 1;
+const int TILE_BLUE = 2;
+const int TILE_CENTER = 3;
+const int TILE_TOP = 4;
+const int TILE_TOPRIGHT = 5;
+const int TILE_RIGHT = 6;
+const int TILE_BOTTOMRIGHT = 7;
+const int TILE_BOTTOM = 8;
+const int TILE_BOTTOMLEFT = 9;
+const int TILE_LEFT = 10;
+const int TILE_TOPLEFT = 11;
+
+
+//Box collision detector
+bool checkCollision(SDL_Rect a, SDL_Rect b);
 
 
 class boardMember
@@ -60,7 +80,7 @@ private:
 public:
 	Foe();
 	~Foe();
-	void setCoor(int x, int y){ xPos = (x*tileSize); yPos = (y*tileSize); }
+	void setCoor(int x, int y){ xPos = (TILE_WIDTH); yPos = (TILE_HEIGHT); }
 	int XPgiven(Foe);
 
 	int getXpos(){ return xPos; }
@@ -98,7 +118,66 @@ private:
 	int mHeight;
 };
 
+class Tile
+{
+public:
+	//Initializes position and type
+	Tile(int x, int y, int tileType);
 
+	//Shows the tile
+	void render();
+
+	//Get the tile type
+	int getType();
+
+	//Get the collision box
+	SDL_Rect getBox();
+
+private:
+	//The attributes of the tile
+	SDL_Rect mBox;
+
+	//The tile type
+	int mType;
+};
+
+
+//Checks collision box against set of tiles
+bool touchesWall(SDL_Rect box, Tile* tiles[]);
+
+//Sets tiles from tile map
+bool setTiles(Tile *tiles[]);
+
+//The dot that will move around on the screen
+class Dot
+{
+public:
+	//The dimensions of the dot
+	static const int DOT_WIDTH = 20;
+	static const int DOT_HEIGHT = 20;
+
+	//Maximum axis velocity of the dot
+	static const int DOT_VEL = 10;
+
+	//Initializes the variables
+	Dot();
+
+	//Takes key presses and adjusts the dot's velocity
+	void handleEvent(SDL_Event& e);
+
+	//Moves the dot and check collision against tiles
+	void move(Tile *tiles[]);
+
+	//Shows the dot on the screen
+	void render();
+
+private:
+	//Collision box of the dot
+	SDL_Rect mBox;
+
+	//The velocity of the dot
+	int mVelX, mVelY;
+};
 
 
 #endif
