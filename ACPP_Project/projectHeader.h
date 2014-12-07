@@ -155,7 +155,7 @@ class Dot
 		static const int DOT_HEIGHT = 20;
 
 		//Maximum axis velocity of the dot
-		const float DOT_VEL = .99;
+		const float DOT_VEL =  1;
 
 		//Initializes the variables
 		Dot();
