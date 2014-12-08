@@ -41,3 +41,21 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+Game/Debug/Game.pdb
+Game/Debug/Game.exe
+Game/Debug/Game.ilk
+Game/Debug/libjpeg-9.dll
+*.dll
+Game/Game.sdf
+Game/Game.sln
+Game/Game.v12.suo
+Game/Game/Berserker.jpg
+Game/Game/Debug/Game.log
+*.tlog
+*.obj
+*.idb
+*.pdb
+Game/Game/Game.vcxproj
+Game/Game/Game.vcxproj.filters
+tileSEt.psd
