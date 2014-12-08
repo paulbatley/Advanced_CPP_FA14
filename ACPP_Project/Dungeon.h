@@ -4,8 +4,6 @@
 #include "Room.h"
 #include <memory>		//smart pointers
 #include <iostream>		//cout
-//#include <cstdlib>		//rand()
-//#include <ctime>		//to seed srand()
 #include <random>		//random device
 #include <algorithm>	//mt19937
 #include <array>

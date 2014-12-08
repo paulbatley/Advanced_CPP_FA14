@@ -1,4 +1,6 @@
 #include "projectHeader.h"
+#include "Room.h"
+#include "Dungeon.h"
 
 
 /***********\
@@ -55,6 +57,7 @@ bool hitSuccess(boardMember Attacker);
 
 int main(int argc, char* args[])
 {
+	Dungeon map;
 
 	if (!init())
 	{
