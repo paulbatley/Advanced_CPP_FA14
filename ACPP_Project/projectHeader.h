@@ -142,32 +142,32 @@ bool setTiles(Tile *tiles[]);
 //The dot that will move around on the screen
 class Dot
 {
-	public:
-		//The dimensions of the dot
-		static const int DOT_WIDTH = 20;
-		static const int DOT_HEIGHT = 20;
+public:
+	//The dimensions of the dot
+	static const int DOT_WIDTH = 20;
+	static const int DOT_HEIGHT = 20;
 
-		//Maximum axis velocity of the dot
-		const float DOT_VEL =  1;
+	//Maximum axis velocity of the dot
+	const float DOT_VEL = 1;
 
-		//Initializes the variables
-		Dot();
+	//Initializes the variables
+	Dot();
 
-		//Takes key presses and adjusts the dot's velocity
-		void handleEvent(SDL_Event& e);
+	//Takes key presses and adjusts the dot's velocity
+	void handleEvent(SDL_Event& e);
 
-		//Moves the dot and check collision against tiles
-		void move(Tile *tiles[]);
+	//Moves the dot and check collision against tiles
+	void move(Tile *tiles[]);
 
-		//Shows the dot on the screen
-		void render();
+	//Shows the dot on the screen
+	void render();
 
-	private:
-		//Collision box of the dot
-		SDL_Rect mBox;
+private:
+	//Collision box of the dot
+	SDL_Rect mBox;
 
-		//The velocity of the dot
-		float mVelX, mVelY;
+	//The velocity of the dot
+	float mVelX, mVelY;
 };
 
 
