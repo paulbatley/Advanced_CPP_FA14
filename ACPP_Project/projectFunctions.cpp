@@ -123,6 +123,10 @@ Dot::Dot()
 	mVelY = 0;
 }
 
+SDL_Rect Dot::getBox(){
+	return Dot::mBox;
+}
+
 Tile::Tile(int x, int y, int tileType)
 {
 	//Get the offsets

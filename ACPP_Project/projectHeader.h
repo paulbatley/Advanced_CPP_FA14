@@ -162,6 +162,8 @@ public:
 	//Shows the dot on the screen
 	void render();
 
+	SDL_Rect getBox();
+
 private:
 	//Collision box of the dot
 	SDL_Rect mBox;

@@ -47,6 +47,7 @@ SDL_Surface* gCurrentSurface = NULL;
 SDL_Surface* gKeyPressSurfaces[1];
 
 
+Dot dot;
 Dungeon dungeonLevel;
 int roomIndex = dungeonLevel.firstRoom;
 int boardPositionX = SCREEN_WIDTH;
@@ -58,7 +59,6 @@ bool hitSuccess(boardMember Attacker);
 
 int main(int argc, char* args[])
 {
-
 	if (!init())
 	{
 		std::cout << "Initialization failed!" << std::endl;
@@ -78,7 +78,7 @@ int main(int argc, char* args[])
 			SDL_Event e;
 
 			//The dot that will be moving around on the screen
-			Dot dot;
+			//Dot dot;
 
 			while (!quit)
 			{
@@ -480,20 +480,24 @@ bool touchesWall(SDL_Rect box, Tile* tiles[])
 				case(TILE_UPDOOR) :
 					if (dungeonLevel.map[roomIndex]->up){
 						roomIndex = roomIndex - DUNGEON_WIDTH;
+						//dot.getBox().x = SCREEN_WIDTH / 2;
 						setTiles(tiles);
 					}
+					return true;
 					break;
 				case(TILE_BOTTOMDOOR):
 					if (dungeonLevel.map[roomIndex]->down){
 						roomIndex = roomIndex + DUNGEON_WIDTH;
 						setTiles(tiles);
 					}
+					return true;
 					break;
 				case(TILE_RIGHTDOOR):
 					if (dungeonLevel.map[roomIndex]->right){
 						roomIndex++;
 						setTiles(tiles);
 					}
+					return true;
 					break;
 				case(TILE_LEFTDOOR):
 					if (dungeonLevel.map[roomIndex]->left){
@@ -503,11 +507,6 @@ bool touchesWall(SDL_Rect box, Tile* tiles[])
 					break;
 				}
 				
-				
-				if (tiles[i] == TILE_UPDOOR){
-					if (dungeonLevel.map[roomIndex]->up)
-						setTiles(tiles);
-				}
 				return true;
 			}
 		}
