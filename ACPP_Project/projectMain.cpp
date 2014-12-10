@@ -64,7 +64,7 @@ int main(int argc, char* args[])
 	{
 		Tile* tileSet[TOTAL_TILES];
 
-		if (!loadMedia( tileSet))
+		if (!loadMedia(tileSet))
 		{
 			std::cout << "Failed to load media!" << std::endl;
 		}
@@ -161,7 +161,7 @@ bool init()
 		{
 			//Create renderer for window
 			gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
-		//	gScreenSurface = SDL_GetWindowSurface(gWindow);
+			//	gScreenSurface = SDL_GetWindowSurface(gWindow);
 			if (gRenderer == NULL)
 			{
 				std::cout << "Renderer could not be created! SDL Error:" << SDL_GetError() << std::endl;
@@ -183,7 +183,7 @@ bool init()
 			}
 		}
 	}
-	
+
 	return success;
 }
 
@@ -249,8 +249,8 @@ bool loadMedia(Tile* tiles[])
 	/*gKeyPressSurfaces[0] = loadSurface("room1.jpg");
 	if (gKeyPressSurfaces[0] == NULL)
 	{
-		printf("Failed to load default image!\n");
-		success = false;
+	printf("Failed to load default image!\n");
+	success = false;
 	}*/
 	//sprites to load
 	return success;
@@ -464,7 +464,7 @@ bool touchesWall(SDL_Rect box, Tile* tiles[])
 	for (int i = 0; i < TOTAL_TILES; ++i)
 	{
 		//If the tile is a wall type tile
-		if ((tiles[i]->getType() > TILE_WALK) && (tiles[i]->getType() <= TILE_BOTTOMRIGHT))
+		if(tiles[i]->getType() < TILE_BOTTOMCEN)
 		{
 			//If the collision box touches the wall tile
 			if (checkCollision(box, tiles[i]->getBox()))
@@ -561,7 +561,7 @@ bool setTiles(Tile* tiles[])
 			gTileClips[TILE_RIGHTDOOR].y = 80;
 			gTileClips[TILE_RIGHTDOOR].w = TILE_WIDTH;
 			gTileClips[TILE_RIGHTDOOR].h = TILE_HEIGHT;
-			
+
 			gTileClips[TILE_BOTTOMDOOR].x = 40;
 			gTileClips[TILE_BOTTOMDOOR].y = 0;
 			gTileClips[TILE_BOTTOMDOOR].w = TILE_WIDTH;
