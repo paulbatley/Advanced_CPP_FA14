@@ -113,8 +113,8 @@ LTexture::~LTexture()
 Dot::Dot()
 {
 	//Initialize the collision box
-	mBox.x = 0;
-	mBox.y = 0;
+	mBox.x = 80;
+	mBox.y = 40;
 	mBox.w = DOT_WIDTH;
 	mBox.h = DOT_HEIGHT;
 
