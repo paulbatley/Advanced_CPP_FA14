@@ -480,7 +480,8 @@ bool touchesWall(SDL_Rect box, Tile* tiles[])
 				case(TILE_UPDOOR) :
 					if (dungeonLevel.map[roomIndex]->up){
 						roomIndex = roomIndex - DUNGEON_WIDTH;
-						//dot.getBox().x = SCREEN_WIDTH / 2;
+						dot.setBoxX(SCREEN_WIDTH / 2);
+						dot.setBoxY(SCREEN_HEIGHT - TILE_HEIGHT -5);
 						setTiles(tiles);
 					}
 					return true;
@@ -488,6 +489,8 @@ bool touchesWall(SDL_Rect box, Tile* tiles[])
 				case(TILE_BOTTOMDOOR):
 					if (dungeonLevel.map[roomIndex]->down){
 						roomIndex = roomIndex + DUNGEON_WIDTH;
+						dot.setBoxX(SCREEN_WIDTH / 2);
+						dot.setBoxY(TILE_HEIGHT + 5);
 						setTiles(tiles);
 					}
 					return true;
@@ -495,6 +498,8 @@ bool touchesWall(SDL_Rect box, Tile* tiles[])
 				case(TILE_RIGHTDOOR):
 					if (dungeonLevel.map[roomIndex]->right){
 						roomIndex++;
+						dot.setBoxX(TILE_WIDTH + 5);
+						dot.setBoxY(SCREEN_HEIGHT / 2);
 						setTiles(tiles);
 					}
 					return true;
@@ -502,6 +507,8 @@ bool touchesWall(SDL_Rect box, Tile* tiles[])
 				case(TILE_LEFTDOOR):
 					if (dungeonLevel.map[roomIndex]->left){
 						roomIndex--;
+						dot.setBoxX(SCREEN_WIDTH - TILE_WIDTH -5);
+						dot.setBoxY(SCREEN_HEIGHT / 2);
 						setTiles(tiles);
 					}
 					break;

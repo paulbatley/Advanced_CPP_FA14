@@ -123,8 +123,15 @@ Dot::Dot()
 	mVelY = 0;
 }
 
-SDL_Rect Dot::getBox(){
-	return Dot::mBox;
+
+void Dot::setBoxX(int x){
+	Dot::mBox.x = x;
+
+}
+
+void Dot::setBoxY(int y){
+	Dot::mBox.y = y;
+
 }
 
 Tile::Tile(int x, int y, int tileType)
