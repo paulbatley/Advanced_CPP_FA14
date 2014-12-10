@@ -5,23 +5,23 @@ enum Corner { UPPER_LEFT, UPPER_RIGHT, LOWER_LEFT, LOWER_RIGHT };
 
 //prints map showing only which rooms have been created
 void Dungeon::printMap(){
-	for (int row = 0; row < (dungeonHeight*dungeonWidth); row++){
+	for (int row = 0; row < (DUNGEON_HEIGHT*DUNGEON_WIDTH); row++){
 		cout << (map[row] == NULL ? "0" : "1");
-		if (row != 0 && (row + 1) % dungeonWidth == 0) cout << "\n";
+		if (row != 0 && (row + 1) % DUNGEON_WIDTH == 0) cout << "\n";
 	}
 }
 
 
 //prints map showing open doors in rooms
 void Dungeon::printRoomsMap(){
-	for (int i = 0; i < dungeonHeight; i++){
+	for (int i = 0; i < DUNGEON_HEIGHT; i++){
 		for (int level = 0; level < 3; level++){
 			switch (level){
 			case 0:
-				for (int j = 0; j < dungeonWidth; j++){
-					if (map[(i*dungeonWidth) + j] != NULL){
+				for (int j = 0; j < DUNGEON_WIDTH; j++){
+					if (map[(i*DUNGEON_WIDTH) + j] != NULL){
 						cout << " ";
-						cout << (map[(i*dungeonWidth) + j]->up ? "o" : "-");
+						cout << (map[(i*DUNGEON_WIDTH) + j]->up ? "o" : "-");
 						cout << " ";
 					}
 					else{
@@ -31,10 +31,10 @@ void Dungeon::printRoomsMap(){
 				cout << endl;
 				break;
 			case 1:
-				for (int j = 0; j < dungeonWidth; j++){
-					if (map[(i*dungeonWidth) + j] != NULL){
-						cout << (map[(i*dungeonWidth) + j]->left ? "o" : "|");
-						cout << " " << (map[(i*dungeonWidth) + j]->right ? "o" : "|");
+				for (int j = 0; j < DUNGEON_WIDTH; j++){
+					if (map[(i*DUNGEON_WIDTH) + j] != NULL){
+						cout << (map[(i*DUNGEON_WIDTH) + j]->left ? "o" : "|");
+						cout << " " << (map[(i*DUNGEON_WIDTH) + j]->right ? "o" : "|");
 					}
 					else{
 						cout << "| |";
@@ -43,10 +43,10 @@ void Dungeon::printRoomsMap(){
 				cout << endl;
 				break;
 			case 2:
-				for (int j = 0; j < dungeonWidth; j++){
-					if (map[(i*dungeonWidth) + j] != NULL){
+				for (int j = 0; j < DUNGEON_WIDTH; j++){
+					if (map[(i*DUNGEON_WIDTH) + j] != NULL){
 						cout << " ";
-						cout << (map[(i*dungeonWidth) + j]->down ? "o" : "-");
+						cout << (map[(i*DUNGEON_WIDTH) + j]->down ? "o" : "-");
 						cout << " ";
 					}
 					else{
@@ -65,13 +65,13 @@ void Dungeon::printRoomsMap(){
 
 //returns x position from given index of 2D array
 int Dungeon::findX(int index){
-	return index / dungeonWidth;
+	return index / DUNGEON_WIDTH;
 }
 
 
 //returns x position from given index of 2D array
 int Dungeon::findY(int index){
-	return index % dungeonWidth; 
+	return index % DUNGEON_WIDTH; 
 }
 
 
@@ -83,7 +83,7 @@ void Dungeon::generateRoom(int index)
 	//DELETE
 	cout << "total rooms: " << totalRooms << endl;
 	//room out of bounds
-	if (index >= (dungeonHeight*dungeonWidth))
+	if (index >= (DUNGEON_HEIGHT*DUNGEON_WIDTH))
 		return;
 
 	//make the room at its coordinates
@@ -107,8 +107,8 @@ void Dungeon::generateRoom(int index)
 		switch (shuffled_doors[i]){
 			//left
 			case 1:
-				if ((index % dungeonWidth) != 0){
-					if (map[index - 1] == NULL && totalRooms < maxRooms){
+				if ((index % DUNGEON_WIDTH) != 0){
+					if (map[index - 1] == NULL && totalRooms < MAX_ROOMS){
 							map[index]->left = randOpen(randomize);
 							//door opened, make a new room on the left
 							if (map[index]->left){
@@ -121,8 +121,8 @@ void Dungeon::generateRoom(int index)
 
 			//right
 			case 2:
-				if ((index + 1) < (dungeonHeight*dungeonWidth) && ((index + 1) % dungeonWidth) != 0){
-					if (map[index + 1] == NULL && totalRooms < maxRooms){
+				if ((index + 1) < (DUNGEON_HEIGHT*DUNGEON_WIDTH) && ((index + 1) % DUNGEON_WIDTH) != 0){
+					if (map[index + 1] == NULL && totalRooms < MAX_ROOMS){
 							map[index]->right = randOpen(randomize);
 							//door opened, make a new room on the right
 							if (map[index]->right){
@@ -135,13 +135,13 @@ void Dungeon::generateRoom(int index)
 
 			//up
 			case 3:
-				if ((index - dungeonWidth) >= 0){
-					if (map[index - dungeonWidth] == NULL && totalRooms < maxRooms){
+				if ((index - DUNGEON_WIDTH) >= 0){
+					if (map[index - DUNGEON_WIDTH] == NULL && totalRooms < MAX_ROOMS){
 							map[index]->up = randOpen(randomize);
 							//door opened, make a new room on the up
 							if (map[index]->up){
 								totalRooms++;
-								generateRoom(index - dungeonWidth);
+								generateRoom(index - DUNGEON_WIDTH);
 							}
 					}
 				}
@@ -149,13 +149,13 @@ void Dungeon::generateRoom(int index)
 
 			//down
 			case 4:
-				if ((index + dungeonWidth) < (dungeonHeight*dungeonWidth)){
-					if (map[index + dungeonWidth] == NULL && totalRooms < maxRooms){
+				if ((index + DUNGEON_WIDTH) < (DUNGEON_HEIGHT*DUNGEON_WIDTH)){
+					if (map[index + DUNGEON_WIDTH] == NULL && totalRooms < MAX_ROOMS){
 							map[index]->down = randOpen(randomize);
 							//door opened, make a new room on the down
 							if (map[index]->down){
 								totalRooms++;
-								generateRoom(index + dungeonWidth);
+								generateRoom(index + DUNGEON_WIDTH);
 							}
 					}
 				}
@@ -173,7 +173,7 @@ Dungeon::Dungeon()
 {
 	random_device rd;
 	mt19937 mt(rd());
-	uniform_int_distribution<int> dist(0, (dungeonHeight*dungeonWidth) - 1);
+	uniform_int_distribution<int> dist(0, (DUNGEON_HEIGHT*DUNGEON_WIDTH) - 1);
 
 	//make first room at a random place in the map
 	++totalRooms;
@@ -181,18 +181,18 @@ Dungeon::Dungeon()
 	generateRoom(firstRoom);		//makes subsequent rooms from first room
 
 	//goes through entire map and opens doors leading to adjacent rooms
-	for (int i = 0; i < (dungeonHeight*dungeonWidth); i++){
+	for (int i = 0; i < (DUNGEON_HEIGHT*DUNGEON_WIDTH); i++){
 		if (map[i] != NULL){
-			if ((i % dungeonWidth) != 0 && map[i - 1] != NULL)
+			if ((i % DUNGEON_WIDTH) != 0 && map[i - 1] != NULL)
 				map[i]->left = true;
 			//right
-			if (((i + 1) < (dungeonHeight*dungeonWidth) && ((i + 1) % dungeonWidth) != 0) && map[i + 1] != NULL)
+			if (((i + 1) < (DUNGEON_HEIGHT*DUNGEON_WIDTH) && ((i + 1) % DUNGEON_WIDTH) != 0) && map[i + 1] != NULL)
 				map[i]->right = true;
 			//up
-			if ((i - dungeonWidth) >= 0 && map[i - dungeonWidth] != NULL)
+			if ((i - DUNGEON_WIDTH) >= 0 && map[i - DUNGEON_WIDTH] != NULL)
 				map[i]->up = true;
 			//down
-			if ((i + dungeonWidth) < (dungeonHeight*dungeonWidth) && map[i + dungeonWidth] != NULL)
+			if ((i + DUNGEON_WIDTH) < (DUNGEON_HEIGHT*DUNGEON_WIDTH) && map[i + DUNGEON_WIDTH] != NULL)
 				map[i]->down = true;
 		}
 	}

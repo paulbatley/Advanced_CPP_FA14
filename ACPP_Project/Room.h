@@ -9,10 +9,6 @@
 #include "GlobalVar.h"
 using namespace std;
 
-//DELETE
-//const int TOTAL_TILE_SPRITES = 4;
-//const int dungeonWidth = 10;
-//const int dungeonHeight = 5;
 
 struct Coordinates{
 	int x;
@@ -33,8 +29,6 @@ public:
 
 private:
 	string FillNumber(int);
-	//int height = 12;
-	//int width = 10;
 	int height = SCREEN_HEIGHT / TILE_HEIGHT;
 	int width = SCREEN_WIDTH / TILE_WIDTH;
 };

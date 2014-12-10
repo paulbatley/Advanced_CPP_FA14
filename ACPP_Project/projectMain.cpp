@@ -47,7 +47,7 @@ SDL_Surface* gCurrentSurface = NULL;
 SDL_Surface* gKeyPressSurfaces[1];
 
 
-
+Dungeon map;
 int boardPositionX = SCREEN_WIDTH;
 int boardPositionY = SCREEN_HEIGHT;
 
@@ -57,7 +57,6 @@ bool hitSuccess(boardMember Attacker);
 
 int main(int argc, char* args[])
 {
-	Dungeon map;
 
 	if (!init())
 	{
@@ -491,7 +490,7 @@ bool setTiles(Tile* tiles[])
 	int x = 0, y = 0;
 
 	//Open the map
-	std::ifstream map("lazy.map");
+	std::ifstream map(map.map[map.firstRoom]->filename);
 
 	//If the map couldn't be loaded
 	if (!map.is_open())

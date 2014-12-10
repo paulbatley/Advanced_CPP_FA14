@@ -10,9 +10,7 @@
 #include <vector>
 using namespace std;
 
-const int dungeonWidth = 10;
-const int dungeonHeight = 5;
-const int maxRooms = 12;
+
 const float CHANCE_OF_OPEN_DOOR = 0.7;
 
 
@@ -21,7 +19,7 @@ class Dungeon
 public:
 	Dungeon();
 	int firstRoom;
-	array<unique_ptr<Room>, (dungeonHeight*dungeonWidth)> map;
+	array<unique_ptr<Room>, (DUNGEON_HEIGHT*DUNGEON_WIDTH)> map;
 	int findX(int);
 	int findY(int);
 	void printMap();		//prints rooms created
