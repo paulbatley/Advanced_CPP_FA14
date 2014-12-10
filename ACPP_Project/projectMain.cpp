@@ -47,7 +47,8 @@ SDL_Surface* gCurrentSurface = NULL;
 SDL_Surface* gKeyPressSurfaces[1];
 
 
-Dungeon map;
+Dungeon dungeonLevel;
+int roomIndex = dungeonLevel.firstRoom;
 int boardPositionX = SCREEN_WIDTH;
 int boardPositionY = SCREEN_HEIGHT;
 
@@ -241,12 +242,16 @@ bool loadMedia(Tile* tiles[])
 
 
 	}
+
+
 	//Load tile map
 	if (!setTiles(tiles))
 	{
 		printf("Failed to load tile set!\n");
 		success = false;
 	}
+
+
 	//Load default surface
 	/*gKeyPressSurfaces[0] = loadSurface("room1.jpg");
 	if (gKeyPressSurfaces[0] == NULL)
@@ -471,6 +476,38 @@ bool touchesWall(SDL_Rect box, Tile* tiles[])
 			//If the collision box touches the wall tile
 			if (checkCollision(box, tiles[i]->getBox()))
 			{
+				switch (tiles[i]->getType()){
+				case(TILE_UPDOOR) :
+					if (dungeonLevel.map[roomIndex]->up){
+						roomIndex = roomIndex - DUNGEON_WIDTH;
+						setTiles(tiles);
+					}
+					break;
+				case(TILE_BOTTOMDOOR):
+					if (dungeonLevel.map[roomIndex]->down){
+						roomIndex = roomIndex + DUNGEON_WIDTH;
+						setTiles(tiles);
+					}
+					break;
+				case(TILE_RIGHTDOOR):
+					if (dungeonLevel.map[roomIndex]->right){
+						roomIndex++;
+						setTiles(tiles);
+					}
+					break;
+				case(TILE_LEFTDOOR):
+					if (dungeonLevel.map[roomIndex]->left){
+						roomIndex--;
+						setTiles(tiles);
+					}
+					break;
+				}
+				
+				
+				if (tiles[i] == TILE_UPDOOR){
+					if (dungeonLevel.map[roomIndex]->up)
+						setTiles(tiles);
+				}
 				return true;
 			}
 		}
@@ -490,7 +527,7 @@ bool setTiles(Tile* tiles[])
 	int x = 0, y = 0;
 
 	//Open the map
-	std::ifstream map(map.map[map.firstRoom]->filename);
+	std::ifstream map(dungeonLevel.map[roomIndex]->filename);
 
 	//If the map couldn't be loaded
 	if (!map.is_open())
