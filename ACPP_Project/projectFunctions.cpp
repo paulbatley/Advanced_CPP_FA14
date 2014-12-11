@@ -134,6 +134,16 @@ void Dot::setBoxY(int y){
 
 }
 
+int Dot::getBoxX(){
+	return Dot::mBox.x;
+
+}
+
+int Dot::getBoxY(){
+	return Dot::mBox.y;
+
+}
+
 Tile::Tile(int x, int y, int tileType)
 {
 	//Get the offsets

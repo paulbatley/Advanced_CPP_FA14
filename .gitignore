@@ -42,7 +42,6 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-*.map
 Game/Debug/Game.pdb
 Game/Debug/Game.exe
 Game/Debug/Game.ilk
@@ -60,3 +59,5 @@ Game/Game/Debug/Game.log
 Game/Game/Game.vcxproj
 Game/Game/Game.vcxproj.filters
 tileSEt.psd
+*.map
+*.map

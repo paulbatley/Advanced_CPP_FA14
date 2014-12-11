@@ -134,7 +134,7 @@ private:
 
 
 //Checks collision box against set of tiles
-bool touchesWall(SDL_Rect box, Tile* tiles[]);
+int touchesWall(SDL_Rect box, Tile* tiles[]);
 
 //Sets tiles from tile map
 bool setTiles(Tile *tiles[]);
@@ -164,6 +164,8 @@ public:
 
 	void setBoxX(int);
 	void setBoxY(int);
+	int getBoxX();
+	int getBoxY();
 
 private:
 	//Collision box of the dot

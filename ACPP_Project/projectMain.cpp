@@ -5,6 +5,7 @@
 
 
 
+
 /***********\
 ||SDL stuff||
 \***********/
@@ -393,24 +394,26 @@ void Dot::render()
 
 void Dot::move(Tile *tiles[])
 {
+	int wallTouched;
+
 	//Move the dot left or right
 	mBox.x += mVelX;
 
+	wallTouched = touchesWall(mBox, tiles);
+	//cout << wallTouched << endl;
 	//If the dot went too far to the left or right or touched a wall
-	if ((mBox.x < 0) || (mBox.x + DOT_WIDTH > SCREEN_WIDTH) || touchesWall(mBox, tiles))
+	if ((mBox.x < 0) || (mBox.x + DOT_WIDTH > SCREEN_WIDTH) || wallTouched == TILE_WALK)
 	{
-		//move back
-		mBox.x -= mVelX;
+			mBox.x -= mVelX;
 	}
 
 	//Move the dot up or down
 	mBox.y += mVelY;
-
+	wallTouched = touchesWall(mBox, tiles);
 	//If the dot went too far up or down or touched a wall
-	if ((mBox.y < 0) || (mBox.y + DOT_HEIGHT > SCREEN_HEIGHT) || touchesWall(mBox, tiles))
-	{
-		//move back
-		mBox.y -= mVelY;
+	if ((mBox.y < 0) || (mBox.y + DOT_HEIGHT > SCREEN_HEIGHT) || wallTouched == TILE_WALK)
+	{	
+			mBox.y -= mVelY;
 	}
 }
 
@@ -467,7 +470,7 @@ bool checkCollision(SDL_Rect a, SDL_Rect b)
 }
 
 
-bool touchesWall(SDL_Rect box, Tile* tiles[])
+int touchesWall(SDL_Rect box, Tile* tiles[])
 {
 	//Go through the tiles
 	for (int i = 0; i < TOTAL_TILES; ++i)
@@ -480,54 +483,50 @@ bool touchesWall(SDL_Rect box, Tile* tiles[])
 			{
 				switch (tiles[i]->getType()){
 				case(TILE_UPDOOR) :
-					if (dungeonLevel.map[roomIndex]->up){
+					if (dungeonLevel.map[roomIndex]->up && dot.getBoxY() < 2){
 						roomIndex = roomIndex - DUNGEON_WIDTH;
 						Sleep(500);
 						setTiles(tiles);
-						//dot.setBoxX(SCREEN_WIDTH / 2);
-						dot.setBoxY(SCREEN_HEIGHT - TILE_HEIGHT - 22);
+						dot.setBoxY(SCREEN_HEIGHT - TILE_HEIGHT - 12);
 					}
-					return true;
+					return TILE_UPDOOR;
 					break;
 				case(TILE_LEFTDOOR) :
-					if (dungeonLevel.map[roomIndex]->left){
+					if (dungeonLevel.map[roomIndex]->left && dot.getBoxX() < 2){
 						roomIndex--;
 						Sleep(500);
 						setTiles(tiles);
-						dot.setBoxX(SCREEN_WIDTH - TILE_WIDTH - 22);
-						//dot.setBoxY(SCREEN_HEIGHT / 2);
+						dot.setBoxX(SCREEN_WIDTH - TILE_WIDTH - 6);
 					}
-					return true;
+					return TILE_LEFTDOOR;
 					break;
 				case(TILE_RIGHTDOOR) :
-					if (dungeonLevel.map[roomIndex]->right){
+					if (dungeonLevel.map[roomIndex]->right && dot.getBoxX() > (SCREEN_WIDTH - 20)){
 						roomIndex++;
 						Sleep(500);
 						setTiles(tiles);
 						dot.setBoxX(TILE_WIDTH + 2);
-						//dot.setBoxY(SCREEN_HEIGHT / 2);
 					}
-					return true;
+					return TILE_RIGHTDOOR;
 					break;
 				case(TILE_BOTTOMDOOR):
-					if (dungeonLevel.map[roomIndex]->down){
+					if (dungeonLevel.map[roomIndex]->down && dot.getBoxY() > (SCREEN_HEIGHT - 22)){
 						roomIndex = roomIndex + DUNGEON_WIDTH;
 						Sleep(500);
 						setTiles(tiles);
-						//dot.setBoxX(SCREEN_WIDTH / 2);
 						dot.setBoxY(TILE_HEIGHT + 1);
 					}
-					return true;
+					return TILE_BOTTOMDOOR;
 					break;
 				}
 				
-				return true;
+				return TILE_WALK;
 			}
 		}
 	}
 
 	//If no wall tiles were touched
-	return false;
+	return TILE_BOTTOMCEN;
 }
 
 
