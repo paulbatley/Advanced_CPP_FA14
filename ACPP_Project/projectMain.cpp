@@ -1,6 +1,8 @@
 #include "projectHeader.h"
 #include "Room.h"
 #include "Dungeon.h"
+#include <Windows.h>
+
 
 
 /***********\
@@ -77,8 +79,8 @@ int main(int argc, char* args[])
 
 			SDL_Event e;
 
-			//The dot that will be moving around on the screen
-			//Dot dot;
+			//MAKE THREAD LOCK FOR MAP GENERATION
+
 
 			while (!quit)
 			{
@@ -480,37 +482,42 @@ bool touchesWall(SDL_Rect box, Tile* tiles[])
 				case(TILE_UPDOOR) :
 					if (dungeonLevel.map[roomIndex]->up){
 						roomIndex = roomIndex - DUNGEON_WIDTH;
-						dot.setBoxX(SCREEN_WIDTH / 2);
-						dot.setBoxY(SCREEN_HEIGHT - TILE_HEIGHT -5);
+						Sleep(500);
 						setTiles(tiles);
+						dot.setBoxX(SCREEN_WIDTH / 2);
+						dot.setBoxY(SCREEN_HEIGHT - TILE_HEIGHT - 22);
+					}
+					return true;
+					break;
+				case(TILE_LEFTDOOR) :
+					if (dungeonLevel.map[roomIndex]->left){
+						roomIndex--;
+						Sleep(500);
+						setTiles(tiles);
+						dot.setBoxX(SCREEN_WIDTH - TILE_WIDTH - 22);
+						dot.setBoxY(SCREEN_HEIGHT / 2);
+					}
+					return true;
+					break;
+				case(TILE_RIGHTDOOR) :
+					if (dungeonLevel.map[roomIndex]->right){
+						roomIndex++;
+						Sleep(500);
+						setTiles(tiles);
+						dot.setBoxX(TILE_WIDTH + 2);
+						dot.setBoxY(SCREEN_HEIGHT / 2);
 					}
 					return true;
 					break;
 				case(TILE_BOTTOMDOOR):
 					if (dungeonLevel.map[roomIndex]->down){
 						roomIndex = roomIndex + DUNGEON_WIDTH;
+						Sleep(500);
+						setTiles(tiles);
 						dot.setBoxX(SCREEN_WIDTH / 2);
-						dot.setBoxY(TILE_HEIGHT + 5);
-						setTiles(tiles);
+						dot.setBoxY(TILE_HEIGHT + 1);
 					}
 					return true;
-					break;
-				case(TILE_RIGHTDOOR):
-					if (dungeonLevel.map[roomIndex]->right){
-						roomIndex++;
-						dot.setBoxX(TILE_WIDTH + 5);
-						dot.setBoxY(SCREEN_HEIGHT / 2);
-						setTiles(tiles);
-					}
-					return true;
-					break;
-				case(TILE_LEFTDOOR):
-					if (dungeonLevel.map[roomIndex]->left){
-						roomIndex--;
-						dot.setBoxX(SCREEN_WIDTH - TILE_WIDTH -5);
-						dot.setBoxY(SCREEN_HEIGHT / 2);
-						setTiles(tiles);
-					}
 					break;
 				}
 				
@@ -526,6 +533,15 @@ bool touchesWall(SDL_Rect box, Tile* tiles[])
 
 bool setTiles(Tile* tiles[])
 {
+	cout << "UP:" << dungeonLevel.map[roomIndex]->up;
+	cout << " DOWN:" << dungeonLevel.map[roomIndex]->down;
+	cout << " LEFT:" << dungeonLevel.map[roomIndex]->left;
+	cout << " RIGHT:" << dungeonLevel.map[roomIndex]->right << endl;
+
+	cout << "( " << dungeonLevel.map[roomIndex]->coord.x << ", " << dungeonLevel.map[roomIndex]->coord.y << " )" << endl;
+	cout << roomIndex << endl;
+
+
 	//Success flag
 	bool tilesLoaded = true;
 
