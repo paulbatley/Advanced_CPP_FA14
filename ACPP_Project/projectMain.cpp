@@ -484,7 +484,7 @@ bool touchesWall(SDL_Rect box, Tile* tiles[])
 						roomIndex = roomIndex - DUNGEON_WIDTH;
 						Sleep(500);
 						setTiles(tiles);
-						dot.setBoxX(SCREEN_WIDTH / 2);
+						//dot.setBoxX(SCREEN_WIDTH / 2);
 						dot.setBoxY(SCREEN_HEIGHT - TILE_HEIGHT - 22);
 					}
 					return true;
@@ -495,7 +495,7 @@ bool touchesWall(SDL_Rect box, Tile* tiles[])
 						Sleep(500);
 						setTiles(tiles);
 						dot.setBoxX(SCREEN_WIDTH - TILE_WIDTH - 22);
-						dot.setBoxY(SCREEN_HEIGHT / 2);
+						//dot.setBoxY(SCREEN_HEIGHT / 2);
 					}
 					return true;
 					break;
@@ -505,7 +505,7 @@ bool touchesWall(SDL_Rect box, Tile* tiles[])
 						Sleep(500);
 						setTiles(tiles);
 						dot.setBoxX(TILE_WIDTH + 2);
-						dot.setBoxY(SCREEN_HEIGHT / 2);
+						//dot.setBoxY(SCREEN_HEIGHT / 2);
 					}
 					return true;
 					break;
@@ -514,7 +514,7 @@ bool touchesWall(SDL_Rect box, Tile* tiles[])
 						roomIndex = roomIndex + DUNGEON_WIDTH;
 						Sleep(500);
 						setTiles(tiles);
-						dot.setBoxX(SCREEN_WIDTH / 2);
+						//dot.setBoxX(SCREEN_WIDTH / 2);
 						dot.setBoxY(TILE_HEIGHT + 1);
 					}
 					return true;
