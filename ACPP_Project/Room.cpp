@@ -4,7 +4,7 @@ string Room::FillNumber(int num){
 	fill << setfill('0') << std::setw(2) << num;
 	return fill.str();
 }
-Room::Room(int x, int y, bool left, bool right, bool up, bool down){
+void Room::generateRoomMap(int x, int y, bool left, bool right, bool up, bool down){
 	coord.x = x;
 	coord.y = y;
 	//BEFORE PUTTING IN A DOOR TILE, CHECK IF IT'S CLOSED(FALSE) FIRST
