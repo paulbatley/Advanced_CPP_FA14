@@ -7,8 +7,7 @@ string Room::FillNumber(int num){
 void Room::generateRoomMap(int x, int y, bool left, bool right, bool up, bool down){
 	coord.x = x;
 	coord.y = y;
-	//BEFORE PUTTING IN A DOOR TILE, CHECK IF IT'S CLOSED(FALSE) FIRST
-	//IF IT'S CLOSED, THEN PUT IN A WALL TILE
+
 	int wallLimit = (((height*width) - (2 * (height - 2)) + (2 * width)) / 5);
 	filename = "map.map";
 	stringstream subfilename;

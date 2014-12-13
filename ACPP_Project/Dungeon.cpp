@@ -165,7 +165,6 @@ void Dungeon::generateRoom(int index)
 			break;
 		}
 	}
-	map[index]->generateRoomMap(findX(index), findY(index), map[index]->left, map[index]->right, map[index]->up, map[index]->down);
 }
 
 
@@ -197,6 +196,8 @@ Dungeon::Dungeon()
 			//down
 			if ((i + DUNGEON_WIDTH) < (DUNGEON_HEIGHT*DUNGEON_WIDTH) && map[i + DUNGEON_WIDTH] != NULL)
 				map[i]->down = true;
+
+			map[i]->generateRoomMap(findX(i), findY(i), map[i]->left, map[i]->right, map[i]->up, map[i]->down);
 		}
 	}
 
