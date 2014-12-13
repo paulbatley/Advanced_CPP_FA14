@@ -155,8 +155,7 @@ FoeDot::FoeDot()
 	mBox.h = DOT_HEIGHT;
 
 	//Initialize the velocity
-	mVelX = 0;
-	mVelY = 0;
+	mVelX = mVelY = DOT_VEL;
 	//initialize the position
 	mPosX = 120;
 	mPosY = 40;
@@ -237,6 +236,11 @@ void Dot::handleEvent(SDL_Event& e)
 			case SDLK_RIGHT: mVelX -= DOT_VEL; break;
 		}
 	}
+}
+
+void FoeDot::handleEvent()
+{
+	;
 }
 
 SDL_Rect Tile::getBox()

@@ -184,11 +184,11 @@ public:
 	static const int DOT_HEIGHT = 20;
 
 	//Maximum axis velocity of the dot
-	const float DOT_VEL = 500;
+	const float DOT_VEL = 250;
 
 	//Initializes the variables
 	FoeDot();
-
+	void handleEvent();
 	//Shows the dot on the screen
 	void render();
 	void setBoxX(int);

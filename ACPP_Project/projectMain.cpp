@@ -98,7 +98,7 @@ int main(int argc, char* args[])
 					//key press event
 
 					dot.handleEvent(e);
-
+					foe.handleEvent();
 				}
 				float timeStep = stepTimer.getTicks() / 1000.0;
 				dot.move(tileSet, timeStep);
@@ -445,33 +445,26 @@ void FoeDot::move(float timeStep)
 	mBox.x = (int)mPosX;
 	mPosX += mVelX * timeStep;
 	//If the dot went too far to the left or right
-	if (mPosX < 0)
+	if (mPosX < 0 || mPosX > SCREEN_WIDTH - DOT_WIDTH)
 	{
-		mVelX += DOT_VEL;
-		mPosX = 0;
-	}
-	else if (mPosX > SCREEN_WIDTH - DOT_WIDTH)
-	{
-		mVelX -= DOT_VEL;
-		mPosX = SCREEN_WIDTH - DOT_WIDTH;
+		mVelX -= mVelX * 2;
+		mPosX += mVelX * timeStep;
 	}
 
 	mBox.x = (int)mPosX;
 	//Move the dot up or down
-	mPosY += mVelY * timeStep;
 	mBox.y = (int)mPosY;
+	mPosY += mVelY * timeStep;
+	
 
 	//If the dot went too far up or down
-	if (mPosY < 0)
+	if (mPosY < 0 || mPosY > SCREEN_HEIGHT - DOT_HEIGHT)
 	{
-		mVelY += DOT_VEL;
-		mPosY = 0;
+		mVelY -= mVelY * 2;
+		mPosY += mVelY * timeStep;
 	}
-	else if (mPosY > SCREEN_HEIGHT - DOT_HEIGHT)
-	{
-		mVelY -= DOT_VEL;
-		mPosY = SCREEN_HEIGHT - DOT_HEIGHT;
-	}
+	
+	
 	mBox.y = (int)mPosY;
 }
 
