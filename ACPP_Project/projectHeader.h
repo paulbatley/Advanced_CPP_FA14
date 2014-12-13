@@ -25,58 +25,58 @@ const int TILE_BOTTOMRIGHT = 8;
 //Box collision detector
 bool checkCollision(SDL_Rect a, SDL_Rect b);
 
-
-class boardMember
-{
-private:
-	int level;
-	//raw stats
-	int HP;
-	int ATK;
-	int DFN;
-	int POW;
-public:
-	boardMember();
-	~boardMember();
-	void statSet(int newHP, int newPOW, int newATK, int newDFN);
-	int levelUP(){ return ++level; }
-	void setLvl(int levelToSet){ level += levelToSet; }
-	unsigned int ATKcalc(boardMember);
-	int getLevel(){ return level; }
-	int getHP(){ return HP; }
-	void decHP(int amount){ HP -= amount; }
-	int getATK(){ return ATK; }
-	int getDEF(){ return DFN; }
-	int getPOW(){ return POW; }
-
-};
-
-class Allie : public boardMember
-{
-private:
-	long int expr;
-public:
-	Allie();
-	~Allie();
-	int expUP(int XPtoUP){ return expr += XPtoUP; }
-	int checkForLvlUp();
-
-};
-
-class Foe : public boardMember
-{
-private:
-	int xPos;
-	int yPos;
-public:
-	Foe();
-	~Foe();
-	void setCoor(int x, int y){ xPos = (TILE_WIDTH); yPos = (TILE_HEIGHT); }
-	int XPgiven(Foe);
-
-	int getXpos(){ return xPos; }
-	int getYpos(){ return yPos; }
-};
+//
+//class boardMember
+//{
+//private:
+//	int level;
+//	//raw stats
+//	int HP;
+//	int ATK;
+//	int DFN;
+//	int POW;
+//public:
+//	boardMember();
+//	~boardMember();
+//	void statSet(int newHP, int newPOW, int newATK, int newDFN);
+//	int levelUP(){ return ++level; }
+//	void setLvl(int levelToSet){ level += levelToSet; }
+//	unsigned int ATKcalc(boardMember);
+//	int getLevel(){ return level; }
+//	int getHP(){ return HP; }
+//	void decHP(int amount){ HP -= amount; }
+//	int getATK(){ return ATK; }
+//	int getDEF(){ return DFN; }
+//	int getPOW(){ return POW; }
+//
+//};
+//
+//class Allie : public boardMember
+//{
+//private:
+//	long int expr;
+//public:
+//	Allie();
+//	~Allie();
+//	int expUP(int XPtoUP){ return expr += XPtoUP; }
+//	int checkForLvlUp();
+//
+//};
+//
+//class Foe : public boardMember
+//{
+//private:
+//	int xPos;
+//	int yPos;
+//public:
+//	Foe();
+//	~Foe();
+//	void setCoor(int x, int y){ xPos = (TILE_WIDTH); yPos = (TILE_HEIGHT); }
+//	int XPgiven(Foe);
+//
+//	int getXpos(){ return xPos; }
+//	int getYpos(){ return yPos; }
+//};
 
 class LTexture
 {
@@ -148,7 +148,7 @@ public:
 	static const int DOT_HEIGHT = 20;
 
 	//Maximum axis velocity of the dot
-	const float DOT_VEL = 1;
+	const float DOT_VEL = 250;
 
 	//Initializes the variables
 	Dot();
@@ -157,7 +157,7 @@ public:
 	void handleEvent(SDL_Event& e);
 
 	//Moves the dot and check collision against tiles
-	void move(Tile *tiles[]);
+	void move(Tile *tiles[], float timeStep);
 
 	//Shows the dot on the screen
 	void render();
@@ -170,9 +170,41 @@ public:
 private:
 	//Collision box of the dot
 	SDL_Rect mBox;
-
 	//The velocity of the dot
 	float mVelX, mVelY;
+	float mPosX, mPosY;
+};
+
+//The application time based timer
+class LTimer
+{
+public:
+	//Initializes variables
+	LTimer();
+
+	//The various clock actions
+	void start();
+	void stop();
+	void pause();
+	void unpause();
+
+	//Gets the timer's time
+	Uint32 getTicks();
+
+	//Checks the status of the timer
+	bool isStarted();
+	bool isPaused();
+
+private:
+	//The clock time when the timer started
+	Uint32 mStartTicks;
+
+	//The ticks stored when the timer was paused
+	Uint32 mPausedTicks;
+
+	//The timer status
+	bool mPaused;
+	bool mStarted;
 };
 
 

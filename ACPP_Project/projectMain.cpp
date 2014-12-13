@@ -58,7 +58,7 @@ int boardPositionY = SCREEN_HEIGHT;
 
 
 
-bool hitSuccess(boardMember Attacker);
+//bool hitSuccess(boardMember Attacker);
 
 int main(int argc, char* args[])
 {
@@ -81,7 +81,7 @@ int main(int argc, char* args[])
 			SDL_Event e;
 
 			//MAKE THREAD LOCK FOR MAP GENERATION
-
+			LTimer stepTimer;
 
 			while (!quit)
 			{
@@ -98,7 +98,10 @@ int main(int argc, char* args[])
 					dot.handleEvent(e);
 
 				}
-				dot.move(tileSet);
+				float timeStep = stepTimer.getTicks() / 1000.0;
+				dot.move(tileSet, timeStep);
+
+				stepTimer.start();
 
 				//Clear screen
 				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
@@ -119,22 +122,22 @@ int main(int argc, char* args[])
 
 
 		close(tileSet);
-		system("pause");
+		//system("pause");
 		return 0;
 	}
 }
-
-bool hitSuccess(boardMember Attacker)
-{
-	bool hit = false;
-	std::default_random_engine generator;
-	std::uniform_int_distribution<int> distribution(0, 3);
-	if (distribution(generator) != Attacker.getLevel() % 4)
-		hit = true;
-
-	return hit;
-
-}
+//
+//bool hitSuccess(boardMember Attacker)
+//{
+//	bool hit = false;
+//	std::default_random_engine generator;
+//	std::uniform_int_distribution<int> distribution(0, 3);
+//	if (distribution(generator) != Attacker.getLevel() % 4)
+//		hit = true;
+//
+//	return hit;
+//
+//}
 
 
 bool init()
@@ -212,39 +215,39 @@ bool loadMedia(Tile* tiles[])
 		success = false;
 	}
 
-	if (!gSpriteSheetTexture.loadFromFile("sprites.png"))
-	{
-		printf("Failed to load sprite sheet texture!\n");
-		success = false;
-	}
-	else
-	{
-		//Set  first sprite
-		gSpriteClips[0].x = 0;
-		gSpriteClips[0].y = 0;
-		gSpriteClips[0].w = TILE_WIDTH;
-		gSpriteClips[0].h = TILE_HEIGHT;
+	//if (!gSpriteSheetTexture.loadFromFile("sprites.png"))
+	//{
+	//	printf("Failed to load sprite sheet texture!\n");
+	//	success = false;
+	//}
+	//else
+	//{
+	//	////Set  first sprite
+	//	//gSpriteClips[0].x = 0;
+	//	//gSpriteClips[0].y = 0;
+	//	//gSpriteClips[0].w = TILE_WIDTH;
+	//	//gSpriteClips[0].h = TILE_HEIGHT;
 
-		//Set second sprite
-		gSpriteClips[1].x = TILE_WIDTH;
-		gSpriteClips[1].y = 0;
-		gSpriteClips[1].w = TILE_WIDTH;
-		gSpriteClips[1].h = TILE_HEIGHT;
+	//	////Set second sprite
+	//	//gSpriteClips[1].x = TILE_WIDTH;
+	//	//gSpriteClips[1].y = 0;
+	//	//gSpriteClips[1].w = TILE_WIDTH;
+	//	//gSpriteClips[1].h = TILE_HEIGHT;
 
-		//Set third sprite
-		gSpriteClips[2].x = 0;
-		gSpriteClips[2].y = TILE_HEIGHT;
-		gSpriteClips[2].w = TILE_WIDTH;
-		gSpriteClips[2].h = TILE_HEIGHT;
+	//	////Set third sprite
+	//	//gSpriteClips[2].x = 0;
+	//	//gSpriteClips[2].y = TILE_HEIGHT;
+	//	//gSpriteClips[2].w = TILE_WIDTH;
+	//	//gSpriteClips[2].h = TILE_HEIGHT;
 
-		//set the Foe sprite
-		gSpriteClips[3].x = TILE_WIDTH;
-		gSpriteClips[3].y = TILE_HEIGHT;
-		gSpriteClips[3].w = TILE_WIDTH;
-		gSpriteClips[3].h = TILE_HEIGHT;
+	//	////set the Foe sprite
+	//	//gSpriteClips[3].x = TILE_WIDTH;
+	//	//gSpriteClips[3].y = TILE_HEIGHT;
+	//	//gSpriteClips[3].w = TILE_WIDTH;
+	//	//gSpriteClips[3].h = TILE_HEIGHT;
 
 
-	}
+	//}
 
 
 	//Load tile map
@@ -262,7 +265,6 @@ bool loadMedia(Tile* tiles[])
 	printf("Failed to load default image!\n");
 	success = false;
 	}*/
-	//sprites to load
 	return success;
 }
 
@@ -392,29 +394,31 @@ void Dot::render()
 
 }
 
-void Dot::move(Tile *tiles[])
+void Dot::move(Tile *tiles[], float timeStep)
 {
 	int wallTouched;
 
 	//Move the dot left or right
-	mBox.x += mVelX;
-
+	mPosX += mVelX * timeStep;
+	mBox.x = (int)mPosX;
 	wallTouched = touchesWall(mBox, tiles);
 	//cout << wallTouched << endl;
 	//If the dot went too far to the left or right or touched a wall
-	if ((mBox.x < 0) || (mBox.x + DOT_WIDTH > SCREEN_WIDTH) || wallTouched == TILE_WALK)
+	if ((mPosX < 0) || (mPosX + DOT_WIDTH > SCREEN_WIDTH) || wallTouched == TILE_WALK)
 	{
-			mBox.x -= mVelX;
+		mPosX -= mVelX * timeStep;
 	}
-
+	mBox.x = (int)mPosX;
 	//Move the dot up or down
-	mBox.y += mVelY;
+	mPosY += mVelY * timeStep;
+	mBox.y = (int)mPosY;
 	wallTouched = touchesWall(mBox, tiles);
 	//If the dot went too far up or down or touched a wall
-	if ((mBox.y < 0) || (mBox.y + DOT_HEIGHT > SCREEN_HEIGHT) || wallTouched == TILE_WALK)
-	{	
-			mBox.y -= mVelY;
+	if ((mPosY < 0) || (mPosY + DOT_HEIGHT > SCREEN_HEIGHT) || wallTouched == TILE_WALK)
+	{
+		mPosY -= mVelY * timeStep;
 	}
+	mBox.y = (int)mPosY;
 }
 
 void Tile::render()
@@ -476,7 +480,7 @@ int touchesWall(SDL_Rect box, Tile* tiles[])
 	for (int i = 0; i < TOTAL_TILES; ++i)
 	{
 		//If the tile is a wall type tile
-		if(tiles[i]->getType() < TILE_BOTTOMCEN)
+		if (tiles[i]->getType() < TILE_BOTTOMCEN)
 		{
 			//If the collision box touches the wall tile
 			if (checkCollision(box, tiles[i]->getBox()))
@@ -484,42 +488,42 @@ int touchesWall(SDL_Rect box, Tile* tiles[])
 				switch (tiles[i]->getType()){
 				case(TILE_UPDOOR) :
 					if (dungeonLevel.map[roomIndex]->up && dot.getBoxY() < 2){
-						roomIndex = roomIndex - DUNGEON_WIDTH;
-						Sleep(500);
-						setTiles(tiles);
-						dot.setBoxY(SCREEN_HEIGHT - TILE_HEIGHT - 12);
+					roomIndex = roomIndex - DUNGEON_WIDTH;
+					Sleep(500);
+					setTiles(tiles);
+					dot.setBoxY(SCREEN_HEIGHT - TILE_HEIGHT - 12);
 					}
-					return TILE_UPDOOR;
-					break;
+								  return TILE_UPDOOR;
+								  break;
 				case(TILE_LEFTDOOR) :
 					if (dungeonLevel.map[roomIndex]->left && dot.getBoxX() < 2){
-						roomIndex--;
-						Sleep(500);
-						setTiles(tiles);
-						dot.setBoxX(SCREEN_WIDTH - TILE_WIDTH - 6);
+					roomIndex--;
+					Sleep(500);
+					setTiles(tiles);
+					dot.setBoxX(SCREEN_WIDTH - TILE_WIDTH - 6);
 					}
-					return TILE_LEFTDOOR;
-					break;
+									return TILE_LEFTDOOR;
+									break;
 				case(TILE_RIGHTDOOR) :
 					if (dungeonLevel.map[roomIndex]->right && dot.getBoxX() > (SCREEN_WIDTH - 20)){
-						roomIndex++;
-						Sleep(500);
-						setTiles(tiles);
-						dot.setBoxX(TILE_WIDTH + 2);
+					roomIndex++;
+					Sleep(500);
+					setTiles(tiles);
+					dot.setBoxX(TILE_WIDTH + 2);
 					}
-					return TILE_RIGHTDOOR;
-					break;
-				case(TILE_BOTTOMDOOR):
+									 return TILE_RIGHTDOOR;
+									 break;
+				case(TILE_BOTTOMDOOR) :
 					if (dungeonLevel.map[roomIndex]->down && dot.getBoxY() > (SCREEN_HEIGHT - 22)){
-						roomIndex = roomIndex + DUNGEON_WIDTH;
-						Sleep(500);
-						setTiles(tiles);
-						dot.setBoxY(TILE_HEIGHT + 1);
+					roomIndex = roomIndex + DUNGEON_WIDTH;
+					Sleep(500);
+					setTiles(tiles);
+					dot.setBoxY(TILE_HEIGHT + 1);
 					}
-					return TILE_BOTTOMDOOR;
-					break;
+									  return TILE_BOTTOMDOOR;
+									  break;
 				}
-				
+
 				return TILE_WALK;
 			}
 		}
