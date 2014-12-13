@@ -29,14 +29,34 @@ Room::Room(int x, int y, bool left, bool right, bool up, bool down){
 		int toLimit = 0;
 		for (int j = 0; j < width; ++j)
 		{
-			if (i == 0 && j == (width / 2))// up
-				file << FillNumber(0) << " ";
+			if (i == 0 && j == (width / 2)) // up
+			{
+				if(up)
+					file << FillNumber(0) << " ";
+				else
+					file << FillNumber(4) << " ";
+			}
 			else if (i == (height / 2) && j == (0)) // left
-				file << FillNumber(1) << " ";
+			{
+				if(left)
+					file << FillNumber(1) << " ";
+				else
+					file << FillNumber(4) << " ";
+			}
 			else if (i == (height - 1) && j == (width / 2)) // down
-				file << FillNumber(3) << " ";
+			{
+				if(down)
+					file << FillNumber(3) << " ";
+				else
+					file << FillNumber(4) << " ";
+			}
 			else if (i == height / 2 && j == (width - 1)) //right
-				file << FillNumber(2) << " ";
+			{
+				if(right)
+					file << FillNumber(2) << " ";
+				else
+					file << FillNumber(4) << " ";
+			}
 			else if (i == 0 || i == (height - 1) || j == 0 || j == (width - 1) && (i != (height / 2) || j != (width / 2)))//wall
 			{
 				file << FillNumber(4) << " ";
