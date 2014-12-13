@@ -148,7 +148,7 @@ public:
 	static const int DOT_HEIGHT = 20;
 
 	//Maximum axis velocity of the dot
-	const float DOT_VEL = 350;
+	const float DOT_VEL = 123;
 
 	//Initializes the variables
 	Dot();
@@ -167,6 +167,35 @@ public:
 	int getBoxX();
 	int getBoxY();
 
+private:
+	//Collision box of the dot
+	SDL_Rect mBox;
+	//The velocity of the dot
+	float mVelX, mVelY;
+	float mPosX, mPosY;
+};
+
+
+class FoeDot
+{
+public:
+	//The dimensions of the dot
+	static const int DOT_WIDTH = 20;
+	static const int DOT_HEIGHT = 20;
+
+	//Maximum axis velocity of the dot
+	const float DOT_VEL = 500;
+
+	//Initializes the variables
+	FoeDot();
+
+	//Shows the dot on the screen
+	void render();
+	void setBoxX(int);
+	void setBoxY(int);
+	int getBoxX();
+	int getBoxY();
+	void move(float timeStep);
 private:
 	//Collision box of the dot
 	SDL_Rect mBox;

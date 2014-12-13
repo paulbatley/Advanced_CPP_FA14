@@ -30,6 +30,7 @@ SDL_Window* gWindow = NULL;
 
 
 LTexture gDotTexture;
+LTexture gFoeDotTexture;
 //contains sprites
 SDL_Rect gSpriteClips[4];
 
@@ -51,6 +52,7 @@ SDL_Surface* gKeyPressSurfaces[1];
 
 
 Dot dot;
+FoeDot foe;
 Dungeon dungeonLevel;
 int roomIndex = dungeonLevel.firstRoom;
 int boardPositionX = SCREEN_WIDTH;
@@ -100,7 +102,7 @@ int main(int argc, char* args[])
 				}
 				float timeStep = stepTimer.getTicks() / 1000.0;
 				dot.move(tileSet, timeStep);
-
+				foe.move(timeStep);
 				stepTimer.start();
 
 				//Clear screen
@@ -114,13 +116,12 @@ int main(int argc, char* args[])
 				}
 
 				dot.render();
-
+				foe.render();
 				SDL_RenderPresent(gRenderer);
 
 			}
 		}
 
-		system("pause");
 
 		close(tileSet);
 		//system("pause");
@@ -209,6 +210,13 @@ bool loadMedia(Tile* tiles[])
 		success = false;
 	}
 
+	if (!gFoeDotTexture.loadFromFile("dot.bmp"))
+	{
+		printf("Failed to load foedot texture!\n");
+		success = false;
+	}
+
+
 	//Load tile texture
 	if (!gTileTexture.loadFromFile("tiles1.png"))
 	{
@@ -283,6 +291,9 @@ void close(Tile* tiles[])
 
 	//Free loaded images
 	gDotTexture.free();
+	gFoeDotTexture.free();
+	
+
 	gTileTexture.free();
 
 
@@ -395,6 +406,13 @@ void Dot::render()
 
 }
 
+void FoeDot::render()
+{
+	//Show the dot
+	gFoeDotTexture.render(mBox.x, mBox.y);
+
+}
+
 void Dot::move(Tile *tiles[], float timeStep)
 {
 	int wallTouched;
@@ -418,6 +436,41 @@ void Dot::move(Tile *tiles[], float timeStep)
 	if ((mPosY < 0) || (mPosY + DOT_HEIGHT > SCREEN_HEIGHT) || wallTouched == TILE_WALK)
 	{
 		mPosY -= mVelY * timeStep;
+	}
+	mBox.y = (int)mPosY;
+}
+	
+void FoeDot::move(float timeStep)
+{
+	mBox.x = (int)mPosX;
+	mPosX += mVelX * timeStep;
+	//If the dot went too far to the left or right
+	if (mPosX < 0)
+	{
+		mVelX += DOT_VEL;
+		mPosX = 0;
+	}
+	else if (mPosX > SCREEN_WIDTH - DOT_WIDTH)
+	{
+		mVelX -= DOT_VEL;
+		mPosX = SCREEN_WIDTH - DOT_WIDTH;
+	}
+
+	mBox.x = (int)mPosX;
+	//Move the dot up or down
+	mPosY += mVelY * timeStep;
+	mBox.y = (int)mPosY;
+
+	//If the dot went too far up or down
+	if (mPosY < 0)
+	{
+		mVelY += DOT_VEL;
+		mPosY = 0;
+	}
+	else if (mPosY > SCREEN_HEIGHT - DOT_HEIGHT)
+	{
+		mVelY -= DOT_VEL;
+		mPosY = SCREEN_HEIGHT - DOT_HEIGHT;
 	}
 	mBox.y = (int)mPosY;
 }

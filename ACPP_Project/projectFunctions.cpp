@@ -135,16 +135,56 @@ void Dot::setBoxY(int y){
 }
 
 int Dot::getBoxX(){
-	mBox.x = mPosX;
+	Dot::mBox.x = mPosX;
 	return Dot::mBox.x;
 
 }
 
 int Dot::getBoxY(){
-	mBox.y = mPosY;
+	Dot::mBox.y = mPosY;
 	return Dot::mBox.y;
 
 }
+
+FoeDot::FoeDot()
+{
+	//Initialize the collision box
+	mBox.x = 80;
+	mBox.y = 40;
+	mBox.w = DOT_WIDTH;
+	mBox.h = DOT_HEIGHT;
+
+	//Initialize the velocity
+	mVelX = 0;
+	mVelY = 0;
+	//initialize the position
+	mPosX = 120;
+	mPosY = 40;
+}
+
+
+void FoeDot::setBoxX(int x){
+	mBox.x = x;
+	mPosX = x;
+}
+
+void FoeDot::setBoxY(int y){
+	mBox.y = y;
+	mPosY = y;
+}
+
+int FoeDot::getBoxX(){
+	mBox.x = mPosX;
+	return mBox.x;
+
+}
+
+int FoeDot::getBoxY(){
+	mBox.y = mPosY;
+	return mBox.y;
+
+}
+
 
 Tile::Tile(int x, int y, int tileType)
 {
