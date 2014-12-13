@@ -86,8 +86,14 @@ void Dungeon::generateRoom(int index)
 	if (index >= (DUNGEON_HEIGHT*DUNGEON_WIDTH))
 		return;
 
+	//bool left, right, up, down;
+	//left = map[index].get()->left;
+	//right = map[index].get()->right;
+	//up = map[index].get()->up;
+	//down = map[index].get()->down;
+
 	//make the room at its coordinates
-	map[index] = make_unique<Room>(findX(index), findY(index));
+	map[index] = make_unique<Room>(findX(index), findY(index), true, true, true, true);
 
 
 	//random engine for shuffling doors

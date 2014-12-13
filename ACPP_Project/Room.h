@@ -20,7 +20,7 @@ class Room
 {
 public:
 	Room() { };
-	Room(int, int);
+	Room(int, int, bool, bool, bool, bool);
 	int findX(int);
 	int findY(int);
 	Coordinates coord;

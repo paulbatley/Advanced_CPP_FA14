@@ -506,7 +506,7 @@ int touchesWall(SDL_Rect box, Tile* tiles[])
 									return TILE_LEFTDOOR;
 									break;
 				case(TILE_RIGHTDOOR) :
-					if (dungeonLevel.map[roomIndex]->right && dot.getBoxX() > (SCREEN_WIDTH - 20)){
+					if (dungeonLevel.map[roomIndex]->right && dot.getBoxX() > (SCREEN_WIDTH - 30)){
 					roomIndex++;
 					Sleep(500);
 					setTiles(tiles);

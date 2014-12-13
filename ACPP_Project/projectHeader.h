@@ -148,7 +148,7 @@ public:
 	static const int DOT_HEIGHT = 20;
 
 	//Maximum axis velocity of the dot
-	const float DOT_VEL = 250;
+	const float DOT_VEL = 350;
 
 	//Initializes the variables
 	Dot();
