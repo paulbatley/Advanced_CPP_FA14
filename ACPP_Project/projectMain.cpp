@@ -120,6 +120,7 @@ int main(int argc, char* args[])
 			}
 		}
 
+		system("pause");
 
 		close(tileSet);
 		//system("pause");

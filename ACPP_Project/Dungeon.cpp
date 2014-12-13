@@ -71,13 +71,13 @@ int Dungeon::findX(int index){
 
 //returns x position from given index of 2D array
 int Dungeon::findY(int index){
-	return index % DUNGEON_WIDTH; 
+	return index % DUNGEON_WIDTH;
 }
 
 
 /* Creates room at the given index.  Opens room's doors if there are rooms already next to it,
-   randomly tries to open doors if not and creates new rooms through those randomly opened doors. 
-   Recursive.  */
+randomly tries to open doors if not and creates new rooms through those randomly opened doors.
+Recursive.  */
 void Dungeon::generateRoom(int index)
 {
 	//DELETE
@@ -87,8 +87,7 @@ void Dungeon::generateRoom(int index)
 		return;
 
 	//make the room at its coordinates
-	map[index] = make_unique<Room>(findX(index), findY(index),
-		map[index]->left, map[index]->right, map[index]->up, map[index]->down);
+	map[index] = make_unique<Room>(findX(index), findY(index));
 
 
 	//random engine for shuffling doors
@@ -96,7 +95,7 @@ void Dungeon::generateRoom(int index)
 	mt19937 randomize(rd());
 
 	//shuffle case switches which control which doors to open first
-	vector<int> shuffled_doors = { 1, 2, 3, 4 };	
+	vector<int> shuffled_doors = { 1, 2, 3, 4 };
 	shuffle(shuffled_doors.begin(), shuffled_doors.end(), randomize);
 
 	//a random generator w/ a % chance of returning true
@@ -107,60 +106,60 @@ void Dungeon::generateRoom(int index)
 	for (int i = 0; i < 4; i++){
 		switch (shuffled_doors[i]){
 			//left
-			case 1:
-				if ((index % DUNGEON_WIDTH) != 0){
-					if (map[index - 1] == NULL && totalRooms < MAX_ROOMS){
-							map[index]->left = randOpen(randomize);
-							//door opened, make a new room on the left
-							if (map[index]->left){
-								totalRooms++;
-								generateRoom(index - 1);
-							}
+		case 1:
+			if ((index % DUNGEON_WIDTH) != 0){
+				if (map[index - 1] == NULL && totalRooms < MAX_ROOMS){
+					map[index]->left = randOpen(randomize);
+					//door opened, make a new room on the left
+					if (map[index]->left){
+						totalRooms++;
+						generateRoom(index - 1);
 					}
 				}
-				break;
+			}
+			break;
 
 			//right
-			case 2:
-				if ((index + 1) < (DUNGEON_HEIGHT*DUNGEON_WIDTH) && ((index + 1) % DUNGEON_WIDTH) != 0){
-					if (map[index + 1] == NULL && totalRooms < MAX_ROOMS){
-							map[index]->right = randOpen(randomize);
-							//door opened, make a new room on the right
-							if (map[index]->right){
-								totalRooms++;
-								generateRoom(index + 1);
-							}
+		case 2:
+			if ((index + 1) < (DUNGEON_HEIGHT*DUNGEON_WIDTH) && ((index + 1) % DUNGEON_WIDTH) != 0){
+				if (map[index + 1] == NULL && totalRooms < MAX_ROOMS){
+					map[index]->right = randOpen(randomize);
+					//door opened, make a new room on the right
+					if (map[index]->right){
+						totalRooms++;
+						generateRoom(index + 1);
 					}
 				}
-				break;
+			}
+			break;
 
 			//up
-			case 3:
-				if ((index - DUNGEON_WIDTH) >= 0){
-					if (map[index - DUNGEON_WIDTH] == NULL && totalRooms < MAX_ROOMS){
-							map[index]->up = randOpen(randomize);
-							//door opened, make a new room on the up
-							if (map[index]->up){
-								totalRooms++;
-								generateRoom(index - DUNGEON_WIDTH);
-							}
+		case 3:
+			if ((index - DUNGEON_WIDTH) >= 0){
+				if (map[index - DUNGEON_WIDTH] == NULL && totalRooms < MAX_ROOMS){
+					map[index]->up = randOpen(randomize);
+					//door opened, make a new room on the up
+					if (map[index]->up){
+						totalRooms++;
+						generateRoom(index - DUNGEON_WIDTH);
 					}
 				}
-				break;
+			}
+			break;
 
 			//down
-			case 4:
-				if ((index + DUNGEON_WIDTH) < (DUNGEON_HEIGHT*DUNGEON_WIDTH)){
-					if (map[index + DUNGEON_WIDTH] == NULL && totalRooms < MAX_ROOMS){
-							map[index]->down = randOpen(randomize);
-							//door opened, make a new room on the down
-							if (map[index]->down){
-								totalRooms++;
-								generateRoom(index + DUNGEON_WIDTH);
-							}
+		case 4:
+			if ((index + DUNGEON_WIDTH) < (DUNGEON_HEIGHT*DUNGEON_WIDTH)){
+				if (map[index + DUNGEON_WIDTH] == NULL && totalRooms < MAX_ROOMS){
+					map[index]->down = randOpen(randomize);
+					//door opened, make a new room on the down
+					if (map[index]->down){
+						totalRooms++;
+						generateRoom(index + DUNGEON_WIDTH);
 					}
 				}
-				break;
+			}
+			break;
 		}
 	}
 

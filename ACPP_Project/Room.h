@@ -7,7 +7,6 @@
 #include <string>
 #include <sstream>
 #include "GlobalVar.h"
-#include "Dungeon.h"
 using namespace std;
 
 
@@ -21,7 +20,7 @@ class Room
 {
 public:
 	Room() { };
-	Room(int, int, bool, bool, bool, bool);
+	Room(int, int);
 	int findX(int);
 	int findY(int);
 	Coordinates coord;
