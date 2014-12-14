@@ -102,7 +102,7 @@ int main(int argc, char* args[])
 				}
 				float timeStep = stepTimer.getTicks() / 1000.0;
 				dot.move(tileSet, timeStep);
-				foe.move(timeStep);
+				foe.move(dot, timeStep);
 				stepTimer.start();
 
 				//Clear screen
@@ -440,12 +440,12 @@ void Dot::move(Tile *tiles[], float timeStep)
 	mBox.y = (int)mPosY;
 }
 	
-void FoeDot::move(float timeStep)
+void FoeDot::move(Dot dot, float timeStep)
 {
 	mBox.x = (int)mPosX;
 	mPosX += mVelX * timeStep;
 	//If the dot went too far to the left or right
-	if (mPosX < 0 || mPosX > SCREEN_WIDTH - DOT_WIDTH)
+	if (mPosX < 0 || mPosX > SCREEN_WIDTH - DOT_WIDTH||checkCollision(dot.getBox(), mBox))
 	{
 		mVelX -= mVelX * 2;
 		mPosX += mVelX * timeStep;
@@ -458,7 +458,7 @@ void FoeDot::move(float timeStep)
 	
 
 	//If the dot went too far up or down
-	if (mPosY < 0 || mPosY > SCREEN_HEIGHT - DOT_HEIGHT)
+	if (mPosY < 0 || mPosY > SCREEN_HEIGHT - DOT_HEIGHT || checkCollision(dot.getBox(), mBox))
 	{
 		mVelY -= mVelY * 2;
 		mPosY += mVelY * timeStep;

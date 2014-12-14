@@ -166,6 +166,7 @@ public:
 	void setBoxY(int);
 	int getBoxX();
 	int getBoxY();
+	SDL_Rect getBox(){ return mBox; }
 
 private:
 	//Collision box of the dot
@@ -195,7 +196,7 @@ public:
 	void setBoxY(int);
 	int getBoxX();
 	int getBoxY();
-	void move(float timeStep);
+	void move(Dot dot, float timeStep);
 private:
 	//Collision box of the dot
 	SDL_Rect mBox;
