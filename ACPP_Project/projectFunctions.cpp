@@ -1,4 +1,5 @@
 #include "projectHeader.h"
+
 //
 //boardMember::boardMember()
 //{
@@ -10,11 +11,6 @@
 //	std::cout << "member created\n";
 //}
 //
-//boardMember::~boardMember()
-//{
-//	std::cout << "member destroyed\n";
-//
-//}
 //
 //Allie::Allie()
 //{
@@ -22,22 +18,8 @@
 //	std::cout << "Allie created\n";
 //}
 //
-//Allie::~Allie()
-//{
-//	std::cout << "Allie destroyed\n";
-//}
 //
-//Foe::Foe()
-//{
-//	xPos = 0;
-//	yPos = 0;
-//	std::cout << "Foe created\n";
-//}
 //
-//Foe::~Foe()
-//{
-//	std::cout << " foe has been obliviated\n";
-//}
 //
 //int Foe::XPgiven(Foe deadDude)
 //{
@@ -107,6 +89,8 @@ LTexture::~LTexture()
 	free();
 }
 
+
+
 Dot::Dot()
 {
 	//Initialize the collision box
@@ -123,84 +107,27 @@ Dot::Dot()
 	mPosY = 40;
 }
 
-
 void Dot::setBoxX(int x){
-	Dot::mBox.x = x;
-	mPosX = x;
-}
-
-void Dot::setBoxY(int y){
-	Dot::mBox.y = y;
-	mPosY = y;
-}
-
-int Dot::getBoxX(){
-	Dot::mBox.x = mPosX;
-	return Dot::mBox.x;
-
-}
-
-int Dot::getBoxY(){
-	Dot::mBox.y = mPosY;
-	return Dot::mBox.y;
-
-}
-
-FoeDot::FoeDot()
-{
-	//Initialize the collision box
-	mBox.x = 80;
-	mBox.y = 40;
-	mBox.w = DOT_WIDTH;
-	mBox.h = DOT_HEIGHT;
-
-	//Initialize the velocity
-	mVelX = mVelY = DOT_VEL;
-	//initialize the position
-	mPosX = 120;
-	mPosY = 40;
-}
-
-
-void FoeDot::setBoxX(int x){
 	mBox.x = x;
 	mPosX = x;
 }
 
-void FoeDot::setBoxY(int y){
+void Dot::setBoxY(int y){
 	mBox.y = y;
 	mPosY = y;
 }
 
-int FoeDot::getBoxX(){
+int Dot::getBoxX(){
 	mBox.x = mPosX;
 	return mBox.x;
 
 }
 
-int FoeDot::getBoxY(){
+int Dot::getBoxY(){
 	mBox.y = mPosY;
 	return mBox.y;
 
 }
-
-
-Tile::Tile(int x, int y, int tileType)
-{
-	//Get the offsets
-	mBox.x = x;
-	mBox.y = y;
-	
-
-	//Set the collision box
-	mBox.w = TILE_WIDTH;
-	mBox.h = TILE_HEIGHT;
-
-	//Get the tile type
-	mType = tileType;
-}
-
-
 
 void Dot::handleEvent(SDL_Event& e)
 {
@@ -238,9 +165,60 @@ void Dot::handleEvent(SDL_Event& e)
 	}
 }
 
-void FoeDot::handleEvent()
+
+
+FoeDot::FoeDot()
 {
-	;
+	//Initialize the collision box
+	mBox.x = 80;
+	mBox.y = 40;
+	mBox.w = DOT_WIDTH;
+	mBox.h = DOT_HEIGHT;
+
+	//Initialize the velocity
+	mVelX = mVelY = DOT_VEL;
+	//initialize the position
+	mPosX = 120;
+	mPosY = 40;
+}
+
+void FoeDot::setBoxX(int x){
+	mBox.x = x;
+	mPosX = x;
+}
+
+void FoeDot::setBoxY(int y){
+	mBox.y = y;
+	mPosY = y;
+}
+
+int FoeDot::getBoxX(){
+	mBox.x = mPosX;
+	return mBox.x;
+
+}
+
+int FoeDot::getBoxY(){
+	mBox.y = mPosY;
+	return mBox.y;
+
+}
+
+
+
+Tile::Tile(int x, int y, int tileType)
+{
+	//Get the offsets
+	mBox.x = x;
+	mBox.y = y;
+	
+
+	//Set the collision box
+	mBox.w = TILE_WIDTH;
+	mBox.h = TILE_HEIGHT;
+
+	//Get the tile type
+	mType = tileType;
 }
 
 SDL_Rect Tile::getBox()
@@ -252,6 +230,7 @@ int Tile::getType()
 {
 	return mType;
 }
+
 
 
 LTimer::LTimer()

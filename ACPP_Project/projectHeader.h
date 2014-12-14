@@ -21,9 +21,18 @@ const int TILE_TOPRIGHT = 6;
 const int TILE_CENRIGHT = 7;
 const int TILE_BOTTOMRIGHT = 8;
 
-
+//class predefinition
+class FoeDot;
+class Tile;
 //Box collision detector
 bool checkCollision(SDL_Rect a, SDL_Rect b);
+
+//Sets tiles from tile map
+bool setTiles(Tile *tiles[]);
+
+//Checks collision box against set of tiles
+int touchesWall(SDL_Rect box, Tile* tiles[], FoeDot foe);
+
 
 //
 //class boardMember
@@ -50,33 +59,14 @@ bool checkCollision(SDL_Rect a, SDL_Rect b);
 //	int getPOW(){ return POW; }
 //
 //};
-//
-//class Allie : public boardMember
-//{
-//private:
+
 //	long int expr;
-//public:
-//	Allie();
-//	~Allie();
 //	int expUP(int XPtoUP){ return expr += XPtoUP; }
 //	int checkForLvlUp();
 //
-//};
 //
-//class Foe : public boardMember
-//{
-//private:
-//	int xPos;
-//	int yPos;
-//public:
-//	Foe();
-//	~Foe();
 //	void setCoor(int x, int y){ xPos = (TILE_WIDTH); yPos = (TILE_HEIGHT); }
 //	int XPgiven(Foe);
-//
-//	int getXpos(){ return xPos; }
-//	int getYpos(){ return yPos; }
-//};
 
 class LTexture
 {
@@ -109,6 +99,7 @@ private:
 	int mHeight;
 };
 
+//used to tile the board
 class Tile
 {
 public:
@@ -133,11 +124,6 @@ private:
 };
 
 
-//Checks collision box against set of tiles
-int touchesWall(SDL_Rect box, Tile* tiles[]);
-
-//Sets tiles from tile map
-bool setTiles(Tile *tiles[]);
 
 //The dot that will move around on the screen
 class Dot
@@ -146,7 +132,7 @@ public:
 	//The dimensions of the dot
 	static const int DOT_WIDTH = 20;
 	static const int DOT_HEIGHT = 20;
-
+	
 	//Maximum axis velocity of the dot
 	const float DOT_VEL = 123;
 
@@ -157,7 +143,7 @@ public:
 	void handleEvent(SDL_Event& e);
 
 	//Moves the dot and check collision against tiles
-	void move(Tile *tiles[], float timeStep);
+	void move(Tile *tiles[], float timeStep, FoeDot foe);
 
 	//Shows the dot on the screen
 	void render();
@@ -176,7 +162,7 @@ private:
 	float mPosX, mPosY;
 };
 
-
+//basic ai
 class FoeDot
 {
 public:

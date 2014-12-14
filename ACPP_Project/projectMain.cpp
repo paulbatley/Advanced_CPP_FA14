@@ -98,10 +98,9 @@ int main(int argc, char* args[])
 					//key press event
 
 					dot.handleEvent(e);
-					foe.handleEvent();
 				}
 				float timeStep = stepTimer.getTicks() / 1000.0;
-				dot.move(tileSet, timeStep);
+				dot.move(tileSet, timeStep, foe);
 				foe.move(dot, timeStep);
 				stepTimer.start();
 
@@ -124,7 +123,6 @@ int main(int argc, char* args[])
 
 
 		close(tileSet);
-		//system("pause");
 		return 0;
 	}
 }
@@ -224,40 +222,6 @@ bool loadMedia(Tile* tiles[])
 		success = false;
 	}
 
-	//if (!gSpriteSheetTexture.loadFromFile("sprites.png"))
-	//{
-	//	printf("Failed to load sprite sheet texture!\n");
-	//	success = false;
-	//}
-	//else
-	//{
-	//	////Set  first sprite
-	//	//gSpriteClips[0].x = 0;
-	//	//gSpriteClips[0].y = 0;
-	//	//gSpriteClips[0].w = TILE_WIDTH;
-	//	//gSpriteClips[0].h = TILE_HEIGHT;
-
-	//	////Set second sprite
-	//	//gSpriteClips[1].x = TILE_WIDTH;
-	//	//gSpriteClips[1].y = 0;
-	//	//gSpriteClips[1].w = TILE_WIDTH;
-	//	//gSpriteClips[1].h = TILE_HEIGHT;
-
-	//	////Set third sprite
-	//	//gSpriteClips[2].x = 0;
-	//	//gSpriteClips[2].y = TILE_HEIGHT;
-	//	//gSpriteClips[2].w = TILE_WIDTH;
-	//	//gSpriteClips[2].h = TILE_HEIGHT;
-
-	//	////set the Foe sprite
-	//	//gSpriteClips[3].x = TILE_WIDTH;
-	//	//gSpriteClips[3].y = TILE_HEIGHT;
-	//	//gSpriteClips[3].w = TILE_WIDTH;
-	//	//gSpriteClips[3].h = TILE_HEIGHT;
-
-
-	//}
-
 
 	//Load tile map
 	if (!setTiles(tiles))
@@ -267,13 +231,6 @@ bool loadMedia(Tile* tiles[])
 	}
 
 
-	//Load default surface
-	/*gKeyPressSurfaces[0] = loadSurface("room1.jpg");
-	if (gKeyPressSurfaces[0] == NULL)
-	{
-	printf("Failed to load default image!\n");
-	success = false;
-	}*/
 	return success;
 }
 
@@ -349,18 +306,6 @@ bool LTexture::loadFromFile(std::string path)
 	return mTexture != NULL;
 }
 
-//SDL_Surface* loadSurface(std::string path)
-//{
-//	//Load image at specified path
-//	SDL_Surface* loadedSurface = SDL_LoadBMP(path.c_str());
-//	if (loadedSurface == NULL)
-//	{
-//		printf("Unable to load image %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
-//	}
-//
-//	return loadedSurface;
-//}
-
 void LTexture::free()
 {
 	//Free texture if it exists
@@ -406,6 +351,33 @@ void Dot::render()
 
 }
 
+void Dot::move(Tile *tiles[], float timeStep, FoeDot foe)
+{
+	int wallTouched;
+
+	//Move the dot left or right
+	mPosX += Dot::mVelX * timeStep;
+	Dot::mBox.x = (int)Dot::mPosX;
+	wallTouched = touchesWall(Dot::mBox, tiles, foe);
+	//cout << wallTouched << endl;
+	//If the dot went too far to the left or right or touched a wall
+	if ((Dot::mPosX < 0) || (Dot::mPosX + DOT_WIDTH > SCREEN_WIDTH) || wallTouched == TILE_WALK)
+	{
+		Dot::mPosX -= Dot::mVelX * timeStep;
+	}
+	Dot::mBox.x = (int)Dot::mPosX;
+	//Move the dot up or down
+	Dot::mPosY += Dot::mVelY * timeStep;
+	Dot::mBox.y = (int)Dot::mPosY;
+	wallTouched = touchesWall(Dot::mBox, tiles, foe);
+	//If the dot went too far up or down or touched a wall
+	if ((Dot::mPosY < 0) || (Dot::mPosY + DOT_HEIGHT > SCREEN_HEIGHT) || wallTouched == TILE_WALK)
+	{
+		Dot::mPosY -= Dot::mVelY * timeStep;
+	}
+	Dot::mBox.y = (int)Dot::mPosY;
+}
+
 void FoeDot::render()
 {
 	//Show the dot
@@ -413,39 +385,12 @@ void FoeDot::render()
 
 }
 
-void Dot::move(Tile *tiles[], float timeStep)
-{
-	int wallTouched;
-
-	//Move the dot left or right
-	mPosX += mVelX * timeStep;
-	mBox.x = (int)mPosX;
-	wallTouched = touchesWall(mBox, tiles);
-	//cout << wallTouched << endl;
-	//If the dot went too far to the left or right or touched a wall
-	if ((mPosX < 0) || (mPosX + DOT_WIDTH > SCREEN_WIDTH) || wallTouched == TILE_WALK)
-	{
-		mPosX -= mVelX * timeStep;
-	}
-	mBox.x = (int)mPosX;
-	//Move the dot up or down
-	mPosY += mVelY * timeStep;
-	mBox.y = (int)mPosY;
-	wallTouched = touchesWall(mBox, tiles);
-	//If the dot went too far up or down or touched a wall
-	if ((mPosY < 0) || (mPosY + DOT_HEIGHT > SCREEN_HEIGHT) || wallTouched == TILE_WALK)
-	{
-		mPosY -= mVelY * timeStep;
-	}
-	mBox.y = (int)mPosY;
-}
-	
 void FoeDot::move(Dot dot, float timeStep)
 {
 	mBox.x = (int)mPosX;
 	mPosX += mVelX * timeStep;
 	//If the dot went too far to the left or right
-	if (mPosX < 0 || mPosX > SCREEN_WIDTH - DOT_WIDTH||checkCollision(dot.getBox(), mBox))
+	if (mPosX < 0 || mPosX > SCREEN_WIDTH - DOT_WIDTH || checkCollision(dot.getBox(), mBox))
 	{
 		mVelX -= mVelX * 2;
 		mPosX += mVelX * timeStep;
@@ -520,8 +465,7 @@ bool checkCollision(SDL_Rect a, SDL_Rect b)
 	return true;
 }
 
-
-int touchesWall(SDL_Rect box, Tile* tiles[])
+int touchesWall(SDL_Rect box, Tile* tiles[], FoeDot foe)
 {
 	//Go through the tiles
 	for (int i = 0; i < TOTAL_TILES; ++i)
@@ -539,6 +483,8 @@ int touchesWall(SDL_Rect box, Tile* tiles[])
 					Sleep(500);
 					setTiles(tiles);
 					dot.setBoxY(SCREEN_HEIGHT - TILE_HEIGHT - 12);
+					foe.setBoxX(120);
+					foe.setBoxY(40);
 					}
 								  return TILE_UPDOOR;
 								  break;
@@ -548,6 +494,8 @@ int touchesWall(SDL_Rect box, Tile* tiles[])
 					Sleep(500);
 					setTiles(tiles);
 					dot.setBoxX(SCREEN_WIDTH - TILE_WIDTH - 6);
+					foe.setBoxX(120);
+					foe.setBoxY(40);
 					}
 									return TILE_LEFTDOOR;
 									break;
@@ -557,6 +505,8 @@ int touchesWall(SDL_Rect box, Tile* tiles[])
 					Sleep(500);
 					setTiles(tiles);
 					dot.setBoxX(TILE_WIDTH + 2);
+					foe.setBoxX(120);
+					foe.setBoxY(40);
 					}
 									 return TILE_RIGHTDOOR;
 									 break;
@@ -566,6 +516,8 @@ int touchesWall(SDL_Rect box, Tile* tiles[])
 					Sleep(500);
 					setTiles(tiles);
 					dot.setBoxY(TILE_HEIGHT + 1);
+					foe.setBoxX(120);
+					foe.setBoxY(40);
 					}
 									  return TILE_BOTTOMDOOR;
 									  break;
@@ -579,7 +531,6 @@ int touchesWall(SDL_Rect box, Tile* tiles[])
 	//If no wall tiles were touched
 	return TILE_BOTTOMCEN;
 }
-
 
 bool setTiles(Tile* tiles[])
 {
