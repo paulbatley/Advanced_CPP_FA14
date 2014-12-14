@@ -100,7 +100,7 @@ int main(int argc, char* args[])
 					dot.handleEvent(e);
 				}
 				float timeStep = stepTimer.getTicks() / 1000.0;
-				dot.move(tileSet, timeStep, foe);
+				dot.move(tileSet, timeStep);
 				foe.move(dot, timeStep);
 				stepTimer.start();
 
@@ -351,14 +351,14 @@ void Dot::render()
 
 }
 
-void Dot::move(Tile *tiles[], float timeStep, FoeDot foe)
+void Dot::move(Tile *tiles[], float timeStep)
 {
 	int wallTouched;
 
 	//Move the dot left or right
 	mPosX += Dot::mVelX * timeStep;
 	Dot::mBox.x = (int)Dot::mPosX;
-	wallTouched = touchesWall(Dot::mBox, tiles, foe);
+	wallTouched = touchesWall(Dot::mBox, tiles);
 	//cout << wallTouched << endl;
 	//If the dot went too far to the left or right or touched a wall
 	if ((Dot::mPosX < 0) || (Dot::mPosX + DOT_WIDTH > SCREEN_WIDTH) || wallTouched == TILE_WALK)
@@ -369,7 +369,7 @@ void Dot::move(Tile *tiles[], float timeStep, FoeDot foe)
 	//Move the dot up or down
 	Dot::mPosY += Dot::mVelY * timeStep;
 	Dot::mBox.y = (int)Dot::mPosY;
-	wallTouched = touchesWall(Dot::mBox, tiles, foe);
+	wallTouched = touchesWall(Dot::mBox, tiles);
 	//If the dot went too far up or down or touched a wall
 	if ((Dot::mPosY < 0) || (Dot::mPosY + DOT_HEIGHT > SCREEN_HEIGHT) || wallTouched == TILE_WALK)
 	{
@@ -465,7 +465,7 @@ bool checkCollision(SDL_Rect a, SDL_Rect b)
 	return true;
 }
 
-int touchesWall(SDL_Rect box, Tile* tiles[], FoeDot foe)
+int touchesWall(SDL_Rect box, Tile* tiles[])
 {
 	//Go through the tiles
 	for (int i = 0; i < TOTAL_TILES; ++i)

@@ -31,7 +31,7 @@ bool checkCollision(SDL_Rect a, SDL_Rect b);
 bool setTiles(Tile *tiles[]);
 
 //Checks collision box against set of tiles
-int touchesWall(SDL_Rect box, Tile* tiles[], FoeDot foe);
+int touchesWall(SDL_Rect box, Tile* tiles[]);
 
 
 //
@@ -123,8 +123,6 @@ private:
 	int mType;
 };
 
-
-
 //The dot that will move around on the screen
 class Dot
 {
@@ -143,7 +141,7 @@ public:
 	void handleEvent(SDL_Event& e);
 
 	//Moves the dot and check collision against tiles
-	void move(Tile *tiles[], float timeStep, FoeDot foe);
+	void move(Tile *tiles[], float timeStep);
 
 	//Shows the dot on the screen
 	void render();
