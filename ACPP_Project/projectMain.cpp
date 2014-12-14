@@ -2,13 +2,15 @@
 #include "Room.h"
 #include "Dungeon.h"
 #include <Windows.h>
-
-
+#include <thread>
+#include <mutex>
 
 
 /***********\
 ||SDL stuff||
 \***********/
+
+std::mutex collision_mutex;
 
 //Starts up SDL and creates window
 bool init();
@@ -53,6 +55,8 @@ SDL_Surface* gKeyPressSurfaces[1];
 
 Dot dot;
 FoeDot foe;
+
+
 Dungeon dungeonLevel;
 int roomIndex = dungeonLevel.firstRoom;
 int boardPositionX = SCREEN_WIDTH;
@@ -99,9 +103,10 @@ int main(int argc, char* args[])
 
 					dot.handleEvent(e);
 				}
+
 				float timeStep = stepTimer.getTicks() / 1000.0;
-				dot.move(tileSet, timeStep);
-				foe.move(dot, timeStep);
+				std::thread t1(&Dot::move,&dot, tileSet, timeStep);
+				std::thread t2(&FoeDot::move, & foe, timeStep);
 				stepTimer.start();
 
 				//Clear screen
@@ -117,10 +122,11 @@ int main(int argc, char* args[])
 				dot.render();
 				foe.render();
 				SDL_RenderPresent(gRenderer);
-
+				t1.join();
+				t2.join();
 			}
 		}
-
+		
 
 		close(tileSet);
 		return 0;
@@ -375,6 +381,7 @@ void Dot::move(Tile *tiles[], float timeStep)
 	{
 		Dot::mPosY -= Dot::mVelY * timeStep;
 	}
+
 	Dot::mBox.y = (int)Dot::mPosY;
 }
 
@@ -385,9 +392,10 @@ void FoeDot::render()
 
 }
 
-void FoeDot::move(Dot dot, float timeStep)
+void FoeDot::move( float timeStep)
 {
 	mBox.x = (int)mPosX;
+
 	mPosX += mVelX * timeStep;
 	//If the dot went too far to the left or right
 	if (mPosX < 0 || mPosX > SCREEN_WIDTH - DOT_WIDTH || checkCollision(dot.getBox(), mBox))
@@ -422,6 +430,7 @@ void Tile::render()
 
 bool checkCollision(SDL_Rect a, SDL_Rect b)
 {
+	std:lock_guard<mutex> lock(collision_mutex);
 	//The sides of the rectangles
 	int leftA, leftB;
 	int rightA, rightB;

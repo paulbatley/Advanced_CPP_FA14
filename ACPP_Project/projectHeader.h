@@ -11,6 +11,7 @@
 #include <fstream>
 #include "GlobalVar.h"
 
+
 const int TILE_UPDOOR = 0;
 const int TILE_LEFTDOOR = 1;
 const int TILE_RIGHTDOOR = 2;
@@ -21,9 +22,11 @@ const int TILE_TOPRIGHT = 6;
 const int TILE_CENRIGHT = 7;
 const int TILE_BOTTOMRIGHT = 8;
 
+
 //class predefinition
 class FoeDot;
 class Tile;
+
 //Box collision detector
 bool checkCollision(SDL_Rect a, SDL_Rect b);
 
@@ -132,7 +135,7 @@ public:
 	static const int DOT_HEIGHT = 20;
 	
 	//Maximum axis velocity of the dot
-	const float DOT_VEL = 123;
+	const float DOT_VEL = 250;
 
 	//Initializes the variables
 	Dot();
@@ -169,7 +172,7 @@ public:
 	static const int DOT_HEIGHT = 20;
 
 	//Maximum axis velocity of the dot
-	const float DOT_VEL = 250;
+	const float DOT_VEL = 300;
 
 	//Initializes the variables
 	FoeDot();
@@ -180,7 +183,7 @@ public:
 	void setBoxY(int);
 	int getBoxX();
 	int getBoxY();
-	void move(Dot dot, float timeStep);
+	void move( float timeStep);
 private:
 	//Collision box of the dot
 	SDL_Rect mBox;
