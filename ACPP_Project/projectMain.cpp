@@ -99,10 +99,11 @@ int main(int argc, char* args[])
 
 					if (e.type == SDL_QUIT)
 					{
+						dungeonLevel;
 						quit = true;
 					}
 					//key press event
-
+					dungeonLevel.destroy();
 					dot.handleEvent(e);
 				}
 

@@ -18,6 +18,7 @@ class Dungeon
 {
 public:
 	Dungeon();
+	void destroy();
 	int firstRoom;
 	array<unique_ptr<Room>, (DUNGEON_HEIGHT*DUNGEON_WIDTH)> map;
 	int findX(int);
