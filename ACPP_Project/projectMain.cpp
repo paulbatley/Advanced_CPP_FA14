@@ -9,8 +9,10 @@
 /***********\
 ||SDL stuff||
 \***********/
-
-std::mutex collision_mutex;
+bool doorOpen = false;
+void turnLock();
+void lockDoor();
+std::mutex bool_mu;
 
 //Starts up SDL and creates window
 bool init();
@@ -55,7 +57,7 @@ SDL_Surface* gKeyPressSurfaces[1];
 
 Dot dot;
 FoeDot foe;
-
+FoeDot foe1(250,100);
 
 Dungeon dungeonLevel;
 int roomIndex = dungeonLevel.firstRoom;
@@ -85,7 +87,7 @@ int main(int argc, char* args[])
 			bool quit = false;
 
 			SDL_Event e;
-
+			
 			//MAKE THREAD LOCK FOR MAP GENERATION
 			LTimer stepTimer;
 
@@ -104,9 +106,10 @@ int main(int argc, char* args[])
 					dot.handleEvent(e);
 				}
 
-				float timeStep = stepTimer.getTicks() / 1000.0;
-				std::thread t1(&Dot::move,&dot, tileSet, timeStep);
-				std::thread t2(&FoeDot::move, & foe, timeStep);
+				float timeStep = stepTimer.getTicks() / 1000.f;
+				dot.move(tileSet, timeStep);
+				foe.move(timeStep);
+				foe1.move(timeStep);
 				stepTimer.start();
 
 				//Clear screen
@@ -121,16 +124,17 @@ int main(int argc, char* args[])
 
 				dot.render();
 				foe.render();
+				foe1.render();
 				SDL_RenderPresent(gRenderer);
-				t1.join();
-				t2.join();
+				
 			}
 		}
 		
-
 		close(tileSet);
-		return 0;
+		
 	}
+	
+	return 0;
 }
 //
 //bool hitSuccess(boardMember Attacker)
@@ -360,29 +364,29 @@ void Dot::render()
 void Dot::move(Tile *tiles[], float timeStep)
 {
 	int wallTouched;
-
 	//Move the dot left or right
-	mPosX += Dot::mVelX * timeStep;
-	Dot::mBox.x = (int)Dot::mPosX;
-	wallTouched = touchesWall(Dot::mBox, tiles);
+	mPosX += mVelX * timeStep;
+	mBox.x = (int)mPosX;
+	wallTouched = touchesWall(mBox, tiles);
 	//cout << wallTouched << endl;
 	//If the dot went too far to the left or right or touched a wall
-	if ((Dot::mPosX < 0) || (Dot::mPosX + DOT_WIDTH > SCREEN_WIDTH) || wallTouched == TILE_WALK)
+	if ((mPosX < 0) || (mPosX + DOT_WIDTH > SCREEN_WIDTH) || wallTouched == TILE_WALK)
 	{
-		Dot::mPosX -= Dot::mVelX * timeStep;
+		 mPosX -=  mVelX * timeStep;
 	}
-	Dot::mBox.x = (int)Dot::mPosX;
+	 mBox.x = (int) mPosX;
 	//Move the dot up or down
-	Dot::mPosY += Dot::mVelY * timeStep;
-	Dot::mBox.y = (int)Dot::mPosY;
-	wallTouched = touchesWall(Dot::mBox, tiles);
+	 mPosY +=  mVelY * timeStep;
+	 mBox.y = (int) mPosY;
+	wallTouched = touchesWall( mBox, tiles);
 	//If the dot went too far up or down or touched a wall
-	if ((Dot::mPosY < 0) || (Dot::mPosY + DOT_HEIGHT > SCREEN_HEIGHT) || wallTouched == TILE_WALK)
+	if (( mPosY < 0) || ( mPosY + DOT_HEIGHT > SCREEN_HEIGHT) || wallTouched == TILE_WALK )
 	{
-		Dot::mPosY -= Dot::mVelY * timeStep;
+		 mPosY -=  mVelY * timeStep;
 	}
+	
+	 mBox.y = (int) mPosY;
 
-	Dot::mBox.y = (int)Dot::mPosY;
 }
 
 void FoeDot::render()
@@ -395,30 +399,50 @@ void FoeDot::render()
 void FoeDot::move( float timeStep)
 {
 	mBox.x = (int)mPosX;
-
+	mBox.y = (int)mPosY;
+	bool hitsDot = checkCollision(dot.getBox(), mBox);
 	mPosX += mVelX * timeStep;
 	//If the dot went too far to the left or right
-	if (mPosX < 0 || mPosX > SCREEN_WIDTH - DOT_WIDTH || checkCollision(dot.getBox(), mBox))
+	if (mPosX < 0 || mPosX > SCREEN_WIDTH - DOT_WIDTH)
 	{
 		mVelX -= mVelX * 2;
 		mPosX += mVelX * timeStep;
 	}
+	else if (hitsDot)
+	{
+		mVelX -= mVelX * 2;
+		//adjustment to prevent multiple collisions
+		if (mVelX > 0)
+			mPosX += mVelX * timeStep + 5;
+		else
+			mPosX += mVelX * timeStep - 5;
+	}
 
 	mBox.x = (int)mPosX;
 	//Move the dot up or down
-	mBox.y = (int)mPosY;
+	
 	mPosY += mVelY * timeStep;
 	
 
 	//If the dot went too far up or down
-	if (mPosY < 0 || mPosY > SCREEN_HEIGHT - DOT_HEIGHT || checkCollision(dot.getBox(), mBox))
+	if (mPosY < 0 || mPosY > SCREEN_HEIGHT - DOT_HEIGHT )
 	{
 		mVelY -= mVelY * 2;
 		mPosY += mVelY * timeStep;
 	}
+	else if (hitsDot)
+	{
+		mVelY -= mVelY * 2;
+		//adjustment to prevent multiple collisions
+		if (mVelY > 0)
+			mPosY += mVelY * timeStep + 5;
+		else
+			mPosY += mVelY * timeStep - 5;
 	
-	
+	}
 	mBox.y = (int)mPosY;
+	if (hitsDot)
+		turnLock();
 }
 
 void Tile::render()
@@ -430,7 +454,6 @@ void Tile::render()
 
 bool checkCollision(SDL_Rect a, SDL_Rect b)
 {
-	std:lock_guard<mutex> lock(collision_mutex);
 	//The sides of the rectangles
 	int leftA, leftB;
 	int rightA, rightB;
@@ -487,46 +510,50 @@ int touchesWall(SDL_Rect box, Tile* tiles[])
 			{
 				switch (tiles[i]->getType()){
 				case(TILE_UPDOOR) :
-					if (dungeonLevel.map[roomIndex]->up && dot.getBoxY() < 2){
+					if (dungeonLevel.map[roomIndex]->up && dot.getBoxY() < 2 && doorOpen){
 					roomIndex = roomIndex - DUNGEON_WIDTH;
 					Sleep(500);
 					setTiles(tiles);
 					dot.setBoxY(SCREEN_HEIGHT - TILE_HEIGHT - 12);
 					foe.setBoxX(120);
 					foe.setBoxY(40);
+					lockDoor();
 					}
 								  return TILE_UPDOOR;
 								  break;
 				case(TILE_LEFTDOOR) :
-					if (dungeonLevel.map[roomIndex]->left && dot.getBoxX() < 2){
+					if (dungeonLevel.map[roomIndex]->left && dot.getBoxX() < 2 && doorOpen){
 					roomIndex--;
 					Sleep(500);
 					setTiles(tiles);
 					dot.setBoxX(SCREEN_WIDTH - TILE_WIDTH - 6);
 					foe.setBoxX(120);
 					foe.setBoxY(40);
+					lockDoor();
 					}
 									return TILE_LEFTDOOR;
 									break;
 				case(TILE_RIGHTDOOR) :
-					if (dungeonLevel.map[roomIndex]->right && dot.getBoxX() > (SCREEN_WIDTH - 30)){
+					if (dungeonLevel.map[roomIndex]->right && dot.getBoxX() > (SCREEN_WIDTH - 30) && doorOpen){
 					roomIndex++;
 					Sleep(500);
 					setTiles(tiles);
 					dot.setBoxX(TILE_WIDTH + 2);
 					foe.setBoxX(120);
 					foe.setBoxY(40);
+					lockDoor();
 					}
 									 return TILE_RIGHTDOOR;
 									 break;
 				case(TILE_BOTTOMDOOR) :
-					if (dungeonLevel.map[roomIndex]->down && dot.getBoxY() > (SCREEN_HEIGHT - 22)){
+					if (dungeonLevel.map[roomIndex]->down && dot.getBoxY() > (SCREEN_HEIGHT - 22) && doorOpen){
 					roomIndex = roomIndex + DUNGEON_WIDTH;
 					Sleep(500);
 					setTiles(tiles);
 					dot.setBoxY(TILE_HEIGHT + 1);
 					foe.setBoxX(120);
 					foe.setBoxY(40);
+					lockDoor();
 					}
 									  return TILE_BOTTOMDOOR;
 									  break;
@@ -670,4 +697,28 @@ bool setTiles(Tile* tiles[])
 
 	//If the map was loaded fine
 	return tilesLoaded;
+}
+
+void turnLock()
+{
+	if (doorOpen)
+	{
+		doorOpen = false;
+		std::cout << "locked" << std::endl;
+	}
+	else
+	{
+		doorOpen = true;
+		std::cout << "unlocked" << std::endl;
+	}
+
+}
+
+void lockDoor()
+{
+	if (doorOpen)
+	{
+		doorOpen = false;
+		std::cout << "locked" << std::endl;
+	}
 }

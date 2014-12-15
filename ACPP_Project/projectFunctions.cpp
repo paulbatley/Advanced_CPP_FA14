@@ -170,7 +170,7 @@ void Dot::handleEvent(SDL_Event& e)
 FoeDot::FoeDot()
 {
 	//Initialize the collision box
-	mBox.x = 80;
+	mBox.x = 120;
 	mBox.y = 40;
 	mBox.w = DOT_WIDTH;
 	mBox.h = DOT_HEIGHT;
@@ -180,6 +180,21 @@ FoeDot::FoeDot()
 	//initialize the position
 	mPosX = 120;
 	mPosY = 40;
+}
+
+FoeDot::FoeDot(int x, int y)
+{
+	//Initialize the collision box
+	mBox.x = x;
+	mBox.y = y;
+	mBox.w = DOT_WIDTH;
+	mBox.h = DOT_HEIGHT;
+
+	//Initialize the velocity
+	mVelX = mVelY = DOT_VEL + (x/y) + 5;
+	//initialize the position
+	mPosX = x;
+	mPosY = y;
 }
 
 void FoeDot::setBoxX(int x){
