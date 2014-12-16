@@ -16,7 +16,7 @@ const int TILE_UPDOOR = 0;
 const int TILE_LEFTDOOR = 1;
 const int TILE_RIGHTDOOR = 2;
 const int TILE_BOTTOMDOOR = 3;
-const int TILE_WALL = 4;
+const int TILE_WALK = 4;
 const int TILE_BOTTOMCEN = 5;
 const int TILE_TOPRIGHT = 6;
 const int TILE_CENRIGHT = 7;
@@ -114,8 +114,7 @@ public:
 
 	//Get the tile type
 	int getType();
-	// set tile 
-	void setType(int type);
+
 	//Get the collision box
 	SDL_Rect getBox();
 
@@ -185,7 +184,7 @@ public:
 	void setBoxY(int);
 	int getBoxX();
 	int getBoxY();
-	void move(Tile* tiles[], float timeStep);
+	void move( float timeStep);
 	SDL_Rect getBox(){ return mBox; }
 
 private:
