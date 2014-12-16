@@ -76,6 +76,7 @@ void makeMiniMap(){
 int main(int argc, char* args[])
 {
 	thread makeMap(makeMiniMap);
+	makeMap.detach();
 	cout << "Main Window: " << mainWindowID << endl;
 
 	if (!init())
