@@ -1,6 +1,7 @@
 #include "projectHeader.h"
 #include "Room.h"
 #include "Dungeon.h"
+#include "MiniMap.h"
 #include <Windows.h>
 #include <thread>
 #include <mutex>
@@ -60,6 +61,7 @@ FoeDot foe;
 FoeDot foe1(250,100);
 
 Dungeon dungeonLevel;
+MiniMap miniMap;
 int roomIndex = dungeonLevel.firstRoom;
 int boardPositionX = SCREEN_WIDTH;
 int boardPositionY = SCREEN_HEIGHT;
@@ -70,7 +72,7 @@ int boardPositionY = SCREEN_HEIGHT;
 
 int main(int argc, char* args[])
 {
-	if (!init())
+	if (!init() || !miniMap.init())
 	{
 		std::cout << "Initialization failed!" << std::endl;
 	}
@@ -78,7 +80,7 @@ int main(int argc, char* args[])
 	{
 		Tile* tileSet[TOTAL_TILES];
 
-		if (!loadMedia(tileSet))
+		if (!loadMedia(tileSet) || !miniMap.loadMedia())
 		{
 			std::cout << "Failed to load media!" << std::endl;
 		}
@@ -134,11 +136,11 @@ int main(int argc, char* args[])
 			}
 			
 		}
-		
+		miniMap.close();
 		close(tileSet);
 		
 	}
-	
+	//system("pause");
 	return 0;
 }
 //
@@ -386,6 +388,7 @@ bool Dot::move(Tile *tiles[], float timeStep)
 	mBox.x = (int)mPosX;
 	
 	wallTouched = touchesWall(mBox, tiles);
+
 	//cout << wallTouched << endl;
 	//If the dot went too far to the left or right or touched a wall
 	if ((mPosX < 0) || (mPosX + DOT_WIDTH > SCREEN_WIDTH) || wallTouched == TILE_WALL)
@@ -536,10 +539,11 @@ int touchesWall(SDL_Rect box, Tile* tiles[])
 					roomIndex = roomIndex - DUNGEON_WIDTH;
 					Sleep(500);
 					setTiles(tiles);
-					dot.setBoxY(SCREEN_HEIGHT - TILE_HEIGHT - 12);
+					dot.setBoxY(SCREEN_HEIGHT - TILE_HEIGHT - Dot::DOT_HEIGHT - 5);
 					foe.setBoxX(120);
 					foe.setBoxY(40);
 					lockDoor(tiles);
+					dot.incHP(3);
 					}
 								  return TILE_UPDOOR;
 								  break;
@@ -548,10 +552,11 @@ int touchesWall(SDL_Rect box, Tile* tiles[])
 					roomIndex--;
 					Sleep(500);
 					setTiles(tiles);
-					dot.setBoxX(SCREEN_WIDTH - TILE_WIDTH - 6);
+					dot.setBoxX(SCREEN_WIDTH - TILE_WIDTH - Dot::DOT_WIDTH - 5);
 					foe.setBoxX(120);
 					foe.setBoxY(40);
 					lockDoor(tiles);
+					dot.incHP(3);
 					}
 									return TILE_LEFTDOOR;
 									break;
@@ -560,10 +565,11 @@ int touchesWall(SDL_Rect box, Tile* tiles[])
 					roomIndex++;
 					Sleep(500);
 					setTiles(tiles);
-					dot.setBoxX(TILE_WIDTH + 2);
+					dot.setBoxX(TILE_WIDTH + 5);
 					foe.setBoxX(120);
 					foe.setBoxY(40);
 					lockDoor(tiles);
+					dot.incHP(3);
 					}
 									 return TILE_RIGHTDOOR;
 									 break;
@@ -572,10 +578,11 @@ int touchesWall(SDL_Rect box, Tile* tiles[])
 					roomIndex = roomIndex + DUNGEON_WIDTH;
 					Sleep(500);
 					setTiles(tiles);
-					dot.setBoxY(TILE_HEIGHT + 1);
+					dot.setBoxY(TILE_HEIGHT + 5);
 					foe.setBoxX(120);
 					foe.setBoxY(40);
 					lockDoor(tiles);
+					dot.incHP(3);
 					}
 									  return TILE_BOTTOMDOOR;
 									  break;
@@ -584,17 +591,7 @@ int touchesWall(SDL_Rect box, Tile* tiles[])
 				return TILE_WALL;
 			}
 		}
-		else if (tiles[i]->getType() == TILE_CENRIGHT)
-		{
-			if (dot.hpFull())
-				;
-			else
-			{
-				dot.incHP(1);
-				std::cout << "Health Increased to: " << dot.getHP() << std::endl;
-				return TILE_BOTTOMCEN;
-			}
-		}
+		
 	}
 	//If no wall tiles were touched
 	return TILE_BOTTOMCEN;
@@ -833,13 +830,21 @@ bool boardMember::decHP(int amount)
 
 void boardMember::incHP(int amount)
 {
-	HP += amount;
+	if (hpFull())
+		std::cout<<"HEALED"<<std::endl;
+	else
+		HP += amount;
 }
 
 bool boardMember::hpFull()
 {
 	if (getHP() == getMaxHP())
 		return true;
+	else if (getHP() > getMaxHP())
+	{
+		decHP(getHP() - getMaxHP());
+		return hpFull();
+	}
 	else
 		return false;
 }
