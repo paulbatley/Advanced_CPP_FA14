@@ -32,6 +32,7 @@ void close(Tile* tiles[]);
 SDL_Renderer* gRenderer = NULL;
 
 //The window we'll be rendering to
+int mainWindowID;
 SDL_Window* gWindow = NULL;
 LTexture gDotTexture;
 LTexture gFoeDotTexture;
@@ -50,6 +51,7 @@ SDL_Surface* gCurrentSurface = NULL;
 
 //The images that correspond to a keypress
 SDL_Surface* gKeyPressSurfaces[1];
+
 Dot dot;
 FoeDot foe;
 FoeDot foe1(250, 100);
@@ -65,9 +67,8 @@ MiniMap mini;
 void makeMiniMap(){
 	Sleep(200);
 	mini.set();
-	//while (true){
-	//}
-	//mini.loadMedia();
+
+
 }
 
 //bool hitSuccess(boardMember Attacker);
@@ -99,6 +100,17 @@ int main(int argc, char* args[])
 				//event que
 				while (SDL_PollEvent(&e) != 0)
 				{
+					//if (e.type == SDL_WINDOWEVENT && e.window.windowID == mainWindowID){
+					//	if (e.window.event == SDL_WINDOWEVENT_CLOSE)
+					//	{
+					//		quit = true;
+					//	}
+					//}
+					//else{
+					//	//key press event
+					//	dot.handleEvent(e);
+					//}
+
 					if (e.type == SDL_QUIT)
 					{
 						quit = true;
@@ -106,6 +118,7 @@ int main(int argc, char* args[])
 					//key press event
 					dot.handleEvent(e);
 				}
+
 				float timeStep = stepTimer.getTicks() / 1000.f;
 				dead = dot.move(tileSet, timeStep);
 				foe.move(tileSet, timeStep);
@@ -183,6 +196,8 @@ bool init()
 			}
 			else
 			{
+				mainWindowID = SDL_GetWindowID(gWindow);
+
 				//Initialize renderer color
 				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 				//Initialize PNG loading
