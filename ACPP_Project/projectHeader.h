@@ -37,31 +37,35 @@ bool setTiles(Tile *tiles[]);
 int touchesWall(SDL_Rect box, Tile* tiles[]);
 
 
-//
-//class boardMember
-//{
-//private:
-//	int level;
-//	//raw stats
-//	int HP;
-//	int ATK;
-//	int DFN;
-//	int POW;
-//public:
-//	boardMember();
-//	~boardMember();
-//	void statSet(int newHP, int newPOW, int newATK, int newDFN);
-//	int levelUP(){ return ++level; }
-//	void setLvl(int levelToSet){ level += levelToSet; }
-//	unsigned int ATKcalc(boardMember);
-//	int getLevel(){ return level; }
-//	int getHP(){ return HP; }
-//	void decHP(int amount){ HP -= amount; }
-//	int getATK(){ return ATK; }
-//	int getDEF(){ return DFN; }
-//	int getPOW(){ return POW; }
-//
-//};
+
+class boardMember
+{
+private:
+	int level;
+	//raw stats
+	int HP;
+	int ATK;
+	int DFN;
+	int POW;
+	int maxHP;
+
+public:
+	boardMember();
+	~boardMember(){};
+	void statSet(int newHP, int newPOW, int newATK, int newDFN);
+	int levelUP(){ return ++level; }
+	void setLvl(int levelToSet){ level += levelToSet; }
+	//unsigned int ATKcalc(boardMember&);
+	int getLevel(){ return level; }
+	int getHP(){ return HP; }
+	bool decHP(int amount);
+	void incHP(int amount);
+	int getATK(){ return ATK; }
+	int getDEF(){ return DFN; }
+	int getPOW(){ return POW; }
+	int getMaxHP(){ return maxHP; }
+	bool hpFull();
+};
 
 //	long int expr;
 //	int expUP(int XPtoUP){ return expr += XPtoUP; }
@@ -127,7 +131,7 @@ private:
 };
 
 //The dot that will move around on the screen
-class Dot
+class Dot : public boardMember
 {
 public:
 	//The dimensions of the dot
@@ -144,7 +148,7 @@ public:
 	void handleEvent(SDL_Event& e);
 
 	//Moves the dot and check collision against tiles
-	void move(Tile *tiles[], float timeStep);
+	bool move(Tile *tiles[], float timeStep);
 
 	//Shows the dot on the screen
 	void render();
@@ -164,7 +168,7 @@ private:
 };
 
 //basic ai
-class FoeDot
+class FoeDot : public boardMember
 {
 public:
 	//The dimensions of the dot
@@ -173,7 +177,6 @@ public:
 
 	//Maximum axis velocity of the dot
 	const float DOT_VEL = 500;
-
 	//Initializes the variables
 	FoeDot();
 	FoeDot(int, int);
@@ -193,6 +196,7 @@ private:
 	//The velocity of the dot
 	float mVelX, mVelY;
 	float mPosX, mPosY;
+	
 };
 
 //The application time based timer

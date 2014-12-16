@@ -4,7 +4,7 @@
 #include <Windows.h>
 #include <thread>
 #include <mutex>
-
+#include <condition_variable>
 
 /***********\
 ||SDL stuff||
@@ -36,8 +36,6 @@ SDL_Window* gWindow = NULL;
 LTexture gDotTexture;
 LTexture gFoeDotTexture;
 //contains sprites
-SDL_Rect gSpriteClips[4];
-
 LTexture gSpriteSheetTexture;
 
 //Loads individual image
@@ -85,7 +83,7 @@ int main(int argc, char* args[])
 		else
 		{
 			bool quit = false;
-
+			bool dead = false;
 			SDL_Event e;
 			
 			//MAKE THREAD LOCK FOR MAP GENERATION
@@ -107,7 +105,7 @@ int main(int argc, char* args[])
 				}
 
 				float timeStep = stepTimer.getTicks() / 1000.f;
-				dot.move(tileSet, timeStep);
+				dead = dot.move(tileSet, timeStep);
 				foe.move(timeStep);
 				foe1.move(timeStep);
 				stepTimer.start();
@@ -126,7 +124,10 @@ int main(int argc, char* args[])
 				foe.render();
 				foe1.render();
 				SDL_RenderPresent(gRenderer);
-				
+				if (quit)
+					;
+				else
+					quit = dead;
 			}
 		}
 		
@@ -198,7 +199,6 @@ bool init()
 					std::cout << "SDL_image could not initialize! SDL_image Error:" << IMG_GetError() << std::endl;
 					success = false;
 				}
-				gSpriteSheetTexture.render(SCREEN_WIDTH - gSpriteClips[0].w, SCREEN_HEIGHT - gSpriteClips[0].h, &gSpriteClips[0]);
 			}
 		}
 	}
@@ -218,7 +218,7 @@ bool loadMedia(Tile* tiles[])
 		success = false;
 	}
 
-	if (!gFoeDotTexture.loadFromFile("dot.bmp"))
+	if (!gFoeDotTexture.loadFromFile("dot1.bmp"))
 	{
 		printf("Failed to load foedot texture!\n");
 		success = false;
@@ -361,12 +361,26 @@ void Dot::render()
 
 }
 
-void Dot::move(Tile *tiles[], float timeStep)
+bool Dot::move(Tile *tiles[], float timeStep)
 {
+	
+	bool hitsFoe = checkCollision(foe.getBox(), mBox);
+	if (hitsFoe)
+		if (dot.getHP() > 0)
+			dot.decHP(1);
+		else
+			return true;
+	bool hitsFoe1 = checkCollision(foe1.getBox(), mBox);
+	if (hitsFoe1)
+		if (dot.getHP() > 0)
+			dot.decHP(1);
+		else
+			return true;
 	int wallTouched;
 	//Move the dot left or right
 	mPosX += mVelX * timeStep;
 	mBox.x = (int)mPosX;
+	
 	wallTouched = touchesWall(mBox, tiles);
 	//cout << wallTouched << endl;
 	//If the dot went too far to the left or right or touched a wall
@@ -386,7 +400,7 @@ void Dot::move(Tile *tiles[], float timeStep)
 	}
 	
 	 mBox.y = (int) mPosY;
-
+	 return false;
 }
 
 void FoeDot::render()
@@ -401,6 +415,9 @@ void FoeDot::move( float timeStep)
 	mBox.x = (int)mPosX;
 	mBox.y = (int)mPosY;
 	bool hitsDot = checkCollision(dot.getBox(), mBox);
+	if (hitsDot)
+		turnLock();
+		
 	mPosX += mVelX * timeStep;
 	//If the dot went too far to the left or right
 	if (mPosX < 0 || mPosX > SCREEN_WIDTH - DOT_WIDTH)
@@ -440,9 +457,8 @@ void FoeDot::move( float timeStep)
 			mPosY += mVelY * timeStep - 5;
 	
 	}
+
 	mBox.y = (int)mPosY;
-	if (hitsDot)
-		turnLock();
 }
 
 void Tile::render()
@@ -562,8 +578,18 @@ int touchesWall(SDL_Rect box, Tile* tiles[])
 				return TILE_WALK;
 			}
 		}
+		else if (tiles[i]->getType() == TILE_CENRIGHT)
+		{
+			if (dot.hpFull())
+				;
+			else
+			{
+				dot.incHP(1);
+				std::cout << "Health Increased to: " << dot.getHP() << std::endl;
+				return TILE_BOTTOMCEN;
+			}
+		}
 	}
-
 	//If no wall tiles were touched
 	return TILE_BOTTOMCEN;
 }
@@ -701,6 +727,7 @@ bool setTiles(Tile* tiles[])
 
 void turnLock()
 {
+	std::lock_guard<mutex> lock(bool_mu);
 	if (doorOpen)
 	{
 		doorOpen = false;
@@ -721,4 +748,27 @@ void lockDoor()
 		doorOpen = false;
 		std::cout << "locked" << std::endl;
 	}
+}
+
+bool boardMember::decHP(int amount)
+{
+	HP -= amount;
+	std::cout << getHP() << std::endl;
+	if (HP > 1)
+		return false;
+	else
+		return true;
+}
+
+void boardMember::incHP(int amount)
+{
+	HP += amount;
+}
+
+bool boardMember::hpFull()
+{
+	if (getHP() == getMaxHP())
+		return true;
+	else
+		return false;
 }

@@ -1,16 +1,17 @@
 #include "projectHeader.h"
 
 //
-//boardMember::boardMember()
-//{
-//	level = 0;
-//	HP = 0;
-//	ATK = 0;
-//	DFN = 0;
-//	POW = 0;
-//	std::cout << "member created\n";
-//}
-//
+boardMember::boardMember()
+{
+	level = 0;
+	HP = 0;
+	ATK = 0;
+	DFN = 0;
+	POW = 0;
+	maxHP = 0;
+	std::cout << "member created\n";
+}
+
 //
 //Allie::Allie()
 //{
@@ -30,7 +31,8 @@
 //	return XP;
 //}
 //
-//unsigned int boardMember::ATKcalc(boardMember defender)
+
+//unsigned int boardMember::ATKcalc(boardMember& defender)
 //{
 //	unsigned int HPdecreased = 0;
 //	int attackerATK = getATK();
@@ -39,6 +41,7 @@
 //	std::cout << "HP : " << defender.getHP() << std::endl;
 //	return HPdecreased;
 //}
+
 //
 //int Allie::checkForLvlUp()
 //{
@@ -67,13 +70,13 @@
 //	return level;
 //}
 //
-//void boardMember::statSet(int newHP, int newPOW, int newATK, int newDFN)
-//{
-//	HP = newHP;
-//	POW = newPOW;
-//	ATK = newATK;
-//	DFN = newDFN;
-//}
+void boardMember::statSet(int newHP, int newPOW, int newATK, int newDFN)
+{
+	maxHP = HP = newHP;
+	POW = newPOW;
+	ATK = newATK;
+	DFN = newDFN;
+}
 
 LTexture::LTexture()
 {
@@ -105,6 +108,8 @@ Dot::Dot()
 	//initialize the position
 	mPosX = 80;
 	mPosY = 40;
+
+	statSet(10,5,4,4);
 }
 
 void Dot::setBoxX(int x){
@@ -180,6 +185,9 @@ FoeDot::FoeDot()
 	//initialize the position
 	mPosX = 120;
 	mPosY = 40;
+
+	statSet(10, 5, 4, 4);
+
 }
 
 FoeDot::FoeDot(int x, int y)
