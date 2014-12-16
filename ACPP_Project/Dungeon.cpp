@@ -168,7 +168,11 @@ void Dungeon::generateRoom(int index)
 }
 
 
-
+void Dungeon::destroy(){
+	for (int i = 0; i < (DUNGEON_HEIGHT*DUNGEON_WIDTH); i++){
+		map[i].release();
+	}
+}
 
 
 Dungeon::Dungeon()

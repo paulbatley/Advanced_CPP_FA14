@@ -9,9 +9,11 @@
 /***********\
 ||SDL stuff||
 \***********/
+int ROOM_WIDTH = SCREEN_WIDTH / TILE_WIDTH, ROOM_HEIGHT = SCREEN_HEIGHT / TILE_HEIGHT;// x and y for room width and height
+bool setUp = false, setDown = false, setLeft = false, setRight = false;// bools for making doors lock and unlock
 bool doorOpen = false;
-void turnLock();
-void lockDoor();
+void turnLock(Tile* tiles[]);
+void lockDoor(Tile* tiles[]);
 std::mutex bool_mu;
 
 //Starts up SDL and creates window
@@ -97,10 +99,11 @@ int main(int argc, char* args[])
 
 					if (e.type == SDL_QUIT)
 					{
+						dungeonLevel;
 						quit = true;
 					}
 					//key press event
-
+					dungeonLevel.destroy();
 					dot.handleEvent(e);
 				}
 
@@ -459,6 +462,9 @@ void FoeDot::move( float timeStep)
 	}
 
 	mBox.y = (int)mPosY;
+
+	if (hitsDot)
+		turnLock(tiles);
 }
 
 void Tile::render()
@@ -533,7 +539,7 @@ int touchesWall(SDL_Rect box, Tile* tiles[])
 					dot.setBoxY(SCREEN_HEIGHT - TILE_HEIGHT - 12);
 					foe.setBoxX(120);
 					foe.setBoxY(40);
-					lockDoor();
+					lockDoor(tiles);
 					}
 								  return TILE_UPDOOR;
 								  break;
@@ -545,7 +551,7 @@ int touchesWall(SDL_Rect box, Tile* tiles[])
 					dot.setBoxX(SCREEN_WIDTH - TILE_WIDTH - 6);
 					foe.setBoxX(120);
 					foe.setBoxY(40);
-					lockDoor();
+					lockDoor(tiles);
 					}
 									return TILE_LEFTDOOR;
 									break;
@@ -557,7 +563,7 @@ int touchesWall(SDL_Rect box, Tile* tiles[])
 					dot.setBoxX(TILE_WIDTH + 2);
 					foe.setBoxX(120);
 					foe.setBoxY(40);
-					lockDoor();
+					lockDoor(tiles);
 					}
 									 return TILE_RIGHTDOOR;
 									 break;
@@ -569,7 +575,7 @@ int touchesWall(SDL_Rect box, Tile* tiles[])
 					dot.setBoxY(TILE_HEIGHT + 1);
 					foe.setBoxX(120);
 					foe.setBoxY(40);
-					lockDoor();
+					lockDoor(tiles);
 					}
 									  return TILE_BOTTOMDOOR;
 									  break;
@@ -725,28 +731,93 @@ bool setTiles(Tile* tiles[])
 	return tilesLoaded;
 }
 
-void turnLock()
+void turnLock(Tile* tiles[])
 {
+
 	std::lock_guard<mutex> lock(bool_mu);
+
 	if (doorOpen)
 	{
 		doorOpen = false;
+		gTileClips[TILE_WALL];
 		std::cout << "locked" << std::endl;
+		
+		if (tiles[(ROOM_WIDTH*ROOM_HEIGHT) / (2 * ROOM_HEIGHT)]->getType() == 0)
+		{
+			tiles[(ROOM_WIDTH*ROOM_HEIGHT) / (2 * ROOM_HEIGHT)]->setType(4);
+			setUp = true;
+		}
+		if (tiles[(ROOM_WIDTH*ROOM_HEIGHT) / 2]->getType() == 1)
+		{
+			tiles[(ROOM_WIDTH*ROOM_HEIGHT) / 2]->setType(4);
+			setLeft = true;
+		}
+		if (tiles[((ROOM_WIDTH*ROOM_HEIGHT) / 2) + (ROOM_WIDTH - 1)]->getType() == 2)
+		{
+			tiles[((ROOM_WIDTH*ROOM_HEIGHT) / 2) + (ROOM_WIDTH - 1)]->setType(4);
+			setRight = true;
+		}
+		if (tiles[((ROOM_WIDTH*ROOM_HEIGHT) - (ROOM_WIDTH*ROOM_HEIGHT) / (2 * ROOM_HEIGHT))]->getType() == 3)
+		{
+			tiles[((ROOM_WIDTH*ROOM_HEIGHT) - (ROOM_WIDTH*ROOM_HEIGHT) / (2 * ROOM_HEIGHT))]->setType(4);
+			setDown = true;
+		}
 	}
 	else
 	{
 		doorOpen = true;
 		std::cout << "unlocked" << std::endl;
+		if (setUp == true)
+		{
+			tiles[(ROOM_WIDTH*ROOM_HEIGHT) / (2 * ROOM_HEIGHT)]->setType(0);
+			setUp = false;
+		}
+		if (setLeft == true)
+		{
+			tiles[(ROOM_WIDTH*ROOM_HEIGHT) / 2]->setType(1);
+			setLeft = false;
+		}
+		if (setRight == true)
+		{
+			tiles[((ROOM_WIDTH*ROOM_HEIGHT) / 2) + (ROOM_WIDTH - 1)]->setType(2);
+			setRight = false;
+		}
+		if (setDown == true)
+		{
+			tiles[((ROOM_WIDTH*ROOM_HEIGHT) - (ROOM_WIDTH*ROOM_HEIGHT) / (2 * ROOM_HEIGHT))]->setType(3);
+			setDown = false;
+		}
+		
 	}
 
 }
 
-void lockDoor()
+void lockDoor(Tile* tiles[])
 {
 	if (doorOpen)
 	{
 		doorOpen = false;
 		std::cout << "locked" << std::endl;
+		if (tiles[(ROOM_WIDTH*ROOM_HEIGHT) / (2 * ROOM_HEIGHT)]->getType() == 0)
+		{
+			tiles[(ROOM_WIDTH*ROOM_HEIGHT) / (2 * ROOM_HEIGHT)]->setType(4);
+			setUp = true;
+		}
+		if (tiles[(ROOM_WIDTH*ROOM_HEIGHT) / 2]->getType() == 1)
+		{
+			tiles[(ROOM_WIDTH*ROOM_HEIGHT) / 2]->setType(4);
+			setLeft = true;
+		}
+		if (tiles[((ROOM_WIDTH*ROOM_HEIGHT) / 2) + (ROOM_WIDTH - 1)]->getType() == 2)
+		{
+			tiles[((ROOM_WIDTH*ROOM_HEIGHT) / 2) + (ROOM_WIDTH - 1)]->setType(4);
+			setRight = true;
+		}
+		if (tiles[((ROOM_WIDTH*ROOM_HEIGHT) - (ROOM_WIDTH*ROOM_HEIGHT) / (2 * ROOM_HEIGHT))]->getType() == 3)
+		{
+			tiles[((ROOM_WIDTH*ROOM_HEIGHT) - (ROOM_WIDTH*ROOM_HEIGHT) / (2 * ROOM_HEIGHT))]->setType(4);
+			setDown = true;
+		}
 	}
 }
 
