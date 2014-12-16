@@ -8,6 +8,7 @@
 #include <algorithm>	//mt19937
 #include <array>
 #include <vector>
+
 using namespace std;
 
 
@@ -18,6 +19,7 @@ class Dungeon
 {
 public:
 	Dungeon();
+	~Dungeon();
 	void destroy();
 	int firstRoom;
 	array<unique_ptr<Room>, (DUNGEON_HEIGHT*DUNGEON_WIDTH)> map;

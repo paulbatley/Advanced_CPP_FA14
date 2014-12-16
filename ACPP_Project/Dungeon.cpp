@@ -170,7 +170,10 @@ void Dungeon::generateRoom(int index)
 
 void Dungeon::destroy(){
 	for (int i = 0; i < (DUNGEON_HEIGHT*DUNGEON_WIDTH); i++){
+		if (map[i] != NULL)
+			remove(map[i]->filename.c_str());
 		map[i].release();
+		
 	}
 }
 
@@ -217,6 +220,9 @@ Dungeon::Dungeon()
 }
 
 
-
+Dungeon::~Dungeon()
+{
+	destroy();
+}
 
 
