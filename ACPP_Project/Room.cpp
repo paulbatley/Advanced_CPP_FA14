@@ -18,6 +18,8 @@ void Room::generateRoomMap(int x, int y, bool left, bool right, bool up, bool do
 	for (int i = 0; i < height; ++i)
 	{
 		int toLimit = 0;
+		int healTileLimit = 1; // for heal tiling limit
+		int toHealLimit = 0;
 		for (int j = 0; j < width; ++j)
 		{
 			if (i == 0 && j == (width / 2)) // up
@@ -55,6 +57,7 @@ void Room::generateRoomMap(int x, int y, bool left, bool right, bool up, bool do
 			else//rest of floor
 			{
 				int num = rand() % (TOTAL_TILE_SPRITES - 4) + 4;
+				
 				if (num == 4 && (toLimit >= wallLimit || // wall limit
 					((i == 1 && j > 0 && j < width - 1) || // top wall
 					(i == height - 2 && j > 0 && j < width - 1) || // bottom wall
@@ -64,7 +67,17 @@ void Room::generateRoomMap(int x, int y, bool left, bool right, bool up, bool do
 					num = (rand() % (TOTAL_TILE_SPRITES - 5)) + 5;
 					file << FillNumber(num) << " ";
 				}
-				else if (num == 4 && toLimit < wallLimit)
+				else if (num == 8 && tohealLimit >= healTileLimit)
+				{
+					num = (rand() % (TOTAL_TILE_SPRITES - 6)) + 5;
+					file << FillNumber(num) << " ";
+				}
+				else if (num == 8 && toHealLimit < healTileLimit)
+				{
+					file << FillNumber(num) << " ";
+					++toHealLimit;
+				}
+				else if (num == 4 && toLimit < wallLimit )
 				{
 					file << FillNumber(num) << " ";
 					++toLimit;
