@@ -76,6 +76,7 @@ void makeMiniMap(){
 int main(int argc, char* args[])
 {
 	thread makeMap(makeMiniMap);
+	cout << "Main Window: " << mainWindowID << endl;
 
 	if (!init())
 	{
@@ -100,23 +101,23 @@ int main(int argc, char* args[])
 				//event que
 				while (SDL_PollEvent(&e) != 0)
 				{
-					//if (e.type == SDL_WINDOWEVENT && e.window.windowID == mainWindowID){
-					//	if (e.window.event == SDL_WINDOWEVENT_CLOSE)
-					//	{
-					//		quit = true;
-					//	}
-					//}
-					//else{
-					//	//key press event
-					//	dot.handleEvent(e);
-					//}
-
-					if (e.type == SDL_QUIT)
-					{
-						quit = true;
+					if (e.type == SDL_WINDOWEVENT && e.window.windowID == mainWindowID){
+						if (e.window.event == SDL_WINDOWEVENT_CLOSE)
+						{
+							quit = true;
+						}
 					}
-					//key press event
-					dot.handleEvent(e);
+					else{
+						//key press event
+						dot.handleEvent(e);
+					}
+
+					//if (e.type == SDL_QUIT)
+					//{
+					//	quit = true;
+					//}
+					////key press event
+					//dot.handleEvent(e);
 				}
 
 				float timeStep = stepTimer.getTicks() / 1000.f;

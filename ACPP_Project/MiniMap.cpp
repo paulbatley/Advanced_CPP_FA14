@@ -60,6 +60,7 @@ bool MiniMap::init()
 
 		//Grab window identifier 
 		mWindowID = SDL_GetWindowID( mgWindow );
+		std::cout << "MiniMap ID: " << mWindowID << std::endl;
 	}
 	//	}
 
@@ -93,7 +94,7 @@ void MiniMap::close()
 	mgWindow = NULL;
 
 	//Quit SDL subsystems
-	SDL_Quit();
+	//SDL_Quit();
 }
 
 int MiniMap::set()
