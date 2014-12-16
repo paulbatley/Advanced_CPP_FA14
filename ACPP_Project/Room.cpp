@@ -67,7 +67,7 @@ void Room::generateRoomMap(int x, int y, bool left, bool right, bool up, bool do
 					num = (rand() % (TOTAL_TILE_SPRITES - 5)) + 5;
 					file << FillNumber(num) << " ";
 				}
-				else if (num == 8 && tohealLimit >= healTileLimit)
+				else if (num == 8 && toHealLimit >= healTileLimit)
 				{
 					num = (rand() % (TOTAL_TILE_SPRITES - 6)) + 5;
 					file << FillNumber(num) << " ";
