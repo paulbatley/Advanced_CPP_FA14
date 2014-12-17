@@ -9,10 +9,17 @@ enum Corner { UPPER_LEFT, UPPER_RIGHT, LOWER_LEFT, LOWER_RIGHT };
 
 //prints map showing only which rooms have been created
 void Dungeon::printMap(){
+	ofstream file("Dungeon.map");
 	for (int row = 0; row < (DUNGEON_HEIGHT*DUNGEON_WIDTH); row++){
 		cout << (map[row] == NULL ? "0" : "1");
-		if (row != 0 && (row + 1) % DUNGEON_WIDTH == 0) cout << "\n";
+		file << (map[row] == NULL ? "0" : "1" << " ";
+		if (row != 0 && (row + 1) % DUNGEON_WIDTH == 0) 
+		{
+				cout << "\n";
+				file << "\n";
+		}
 	}
+	file.close();
 }
 
 
