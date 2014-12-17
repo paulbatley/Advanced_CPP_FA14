@@ -60,6 +60,7 @@ public:
 	int getHP(){ return HP; }
 	bool decHP(int amount);
 	void incHP(int amount);
+	void fillHP(){ HP = maxHP; }
 	int getATK(){ return ATK; }
 	int getDEF(){ return DFN; }
 	int getPOW(){ return POW; }
