@@ -8,7 +8,7 @@
 #include <algorithm>	//mt19937
 #include <array>
 #include <vector>
-
+#include <fstream>
 using namespace std;
 
 
