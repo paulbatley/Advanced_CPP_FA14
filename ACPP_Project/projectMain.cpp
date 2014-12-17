@@ -506,7 +506,7 @@ int touchesWall(SDL_Rect box, Tile* tiles[])
 						roomIndex = roomIndex - DUNGEON_WIDTH;
 						Sleep(500);
 						setTiles(tiles);
-						dot.setBoxY(SCREEN_HEIGHT - TILE_HEIGHT - 12);
+						dot.setBoxY(SCREEN_HEIGHT - TILE_HEIGHT - Dot::DOT_HEIGHT - 5);
 						foe.setBoxX(120);
 						foe.setBoxY(40);
 						lockDoor(tiles);
@@ -518,7 +518,7 @@ int touchesWall(SDL_Rect box, Tile* tiles[])
 						roomIndex--;
 						Sleep(500);
 						setTiles(tiles);
-						dot.setBoxX(SCREEN_WIDTH - TILE_WIDTH - 6);
+						dot.setBoxX(SCREEN_WIDTH - TILE_WIDTH - Dot::DOT_WIDTH - 5);
 						foe.setBoxX(120);
 						foe.setBoxY(40);
 						lockDoor(tiles);
@@ -551,17 +551,6 @@ int touchesWall(SDL_Rect box, Tile* tiles[])
 					break;
 				}
 				return TILE_WALL;
-			}
-		}
-		else if (tiles[i]->getType() == TILE_CENRIGHT)
-		{
-			if (dot.hpFull())
-				;
-			else
-			{
-				dot.incHP(1);
-				std::cout << "Health Increased to: " << dot.getHP() << std::endl;
-				return TILE_BOTTOMCEN;
 			}
 		}
 	}
@@ -761,7 +750,7 @@ void lockDoor(Tile* tiles[])
 bool boardMember::decHP(int amount)
 {
 	HP -= amount;
-	std::cout << getHP() << std::endl;
+	std::cout << "Lost a health point: " << getHP() << std::endl;
 	if (HP > 1)
 		return false;
 	else
@@ -769,7 +758,19 @@ bool boardMember::decHP(int amount)
 }
 void boardMember::incHP(int amount)
 {
-	HP += amount;
+	if (hpFull())
+		std::cout << "Full health already" << std::endl;
+	else
+	{
+		HP += amount;
+		if (getHP() > getMaxHP())
+		{
+			fillHP();
+			std::cout << "Filled Heatlh" << std::endl;
+		}
+		else
+			std::cout << "Current Health: " << getHP() << std::endl;
+	}
 }
 bool boardMember::hpFull()
 {
