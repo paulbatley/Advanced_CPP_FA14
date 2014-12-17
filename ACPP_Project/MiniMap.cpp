@@ -8,8 +8,8 @@ and may not be redistributed without written permission.*/
 #include "MiniMap.h"
 
 //Screen dimension constants
-const int mSCREEN_WIDTH = 10*40;
-const int mSCREEN_HEIGHT = 5*40;
+const int mSCREEN_WIDTH = 640;
+const int mSCREEN_HEIGHT = 480;
 
 ////Starts up SDL and creates window
 //bool init();
@@ -30,7 +30,7 @@ SDL_Surface* mgScreenSurface = NULL;
 SDL_Surface* gHelloWorld = NULL;
 
 
-
+SDL_Window* mainWindow;
 
 
 bool MiniMap::init()
@@ -96,7 +96,8 @@ void MiniMap::close()
 	//SDL_Quit();
 }
 
-SDL_Window* MiniMap::set()
+
+void MiniMap::set()
 {
 	//Start up SDL and create window
 	if (!init())
@@ -155,15 +156,82 @@ SDL_Window* MiniMap::set()
 			//SDL_Delay(2000);
 			////Free resources and close SDL
 			//close();
-
-			return mgWindow;
 		}
 	}
-	return mgWindow;
 }
 
 
+
+
+//SDL_Window* MiniMap::set(SDL_Window*)
+//{
+//	//Start up SDL and create window
+//	if (!init())
+//	{
+//		printf("Failed to initialize!\n");
+//	}
+//	else
+//	{
+//		//Load media
+//		if (!loadMedia())
+//		{
+//			printf("Failed to load media!\n");
+//		}
+//		else
+//		{
+//			//	//Main loop flag
+//			//	bool quit = false;
+//
+//			//	//Event handler
+//			//	SDL_Event e;
+//
+//			//	//While application is running
+//			//	while (!quit)
+//			//	{
+//			//		//Handle events on queue
+//			//		while (SDL_PollEvent(&e) != 0)
+//			//		{
+//			//			//User requests quit
+//			//			if (e.type == SDL_WINDOWEVENT && e.window.windowID == mWindowID){
+//			//				if (e.window.event == SDL_WINDOWEVENT_CLOSE)
+//			//				{
+//			//					quit = true;
+//			//				}
+//			//			}
+//
+//			//		}
+//
+//			//		//Apply the image
+//			//		SDL_BlitSurface(gHelloWorld, NULL, mgScreenSurface, NULL);
+//
+//			//		//Update the surface
+//			//		SDL_UpdateWindowSurface(mgWindow);
+//
+//			//		//Wait two seconds
+//			//		SDL_Delay(2000);
+//			//	}
+//			//}
+//
+//			//Apply the image
+//			SDL_BlitSurface(gHelloWorld, NULL, mgScreenSurface, NULL);
+//
+//			//Update the surface
+//			SDL_UpdateWindowSurface(mgWindow);
+//
+//			//Wait two seconds
+//			//SDL_Delay(2000);
+//			////Free resources and close SDL
+//			//close();
+//
+//			return mgWindow;
+//		}
+//	}
+//	return mgWindow;
+//}
+
+
 bool MiniMap::updateMiniMap(){
+	SDL_RaiseWindow(mainWindow);
 	SDL_Event e;
 	if(SDL_PollEvent(&e) != 0)
 	{
@@ -175,7 +243,6 @@ bool MiniMap::updateMiniMap(){
 				return true;
 			}
 		}
-
 	}
 
 	//Apply the image
@@ -187,6 +254,19 @@ bool MiniMap::updateMiniMap(){
 	//Wait two seconds
 	//SDL_Delay(2000);
 	return false;
+}
+
+void MiniMap::showHideMap(){
+	if (isHidden){
+		SDL_ShowWindow(mgWindow);
+		isHidden = false;
+		SDL_RaiseWindow(mainWindow);
+	}
+	else{
+		SDL_HideWindow(mgWindow);
+		isHidden = true;
+		SDL_RaiseWindow(mainWindow);
+	}
 }
 
 

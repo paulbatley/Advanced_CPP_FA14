@@ -134,6 +134,54 @@ int Dot::getBoxY(){
 
 }
 
+//bool Dot::handleEvent(SDL_Event& e, SDL_Window* miniMapWindow, bool mapIsUp)
+//{
+//	//If a key was pressed
+//	if (e.type == SDL_KEYDOWN && e.key.repeat == 0)
+//	{
+//		//Adjust the velocity
+//		switch (e.key.keysym.sym)
+//		{
+//			case SDLK_UP: 
+//				mVelY -= DOT_VEL; 
+//				break;
+//			case SDLK_DOWN: 
+//				mVelY += DOT_VEL; 
+//				break;
+//			case SDLK_LEFT: 
+//				mVelX -= DOT_VEL; 
+//				break;
+//			case SDLK_RIGHT: 
+//				mVelX += DOT_VEL; 
+//				break;
+//			case SDLK_m:
+//				if (mapIsUp){
+//					SDL_HideWindow(miniMapWindow);
+//					mapIsUp = false;
+//				}
+//				else{
+//					SDL_ShowWindow(miniMapWindow);
+//					mapIsUp = true;
+//				}
+//				return mapIsUp;
+//				break;
+//		}
+//	}
+//	//If a key was released
+//	else if (e.type == SDL_KEYUP && e.key.repeat == 0)
+//	{
+//		//Adjust the velocity
+//		switch (e.key.keysym.sym)
+//		{
+//			case SDLK_UP: mVelY += DOT_VEL; break;
+//			case SDLK_DOWN: mVelY -= DOT_VEL; break;
+//			case SDLK_LEFT: mVelX += DOT_VEL; break;
+//			case SDLK_RIGHT: mVelX -= DOT_VEL; break;
+//		}
+//	}
+//	return mapIsUp;
+//}
+
 void Dot::handleEvent(SDL_Event& e)
 {
 	//If a key was pressed
@@ -142,18 +190,18 @@ void Dot::handleEvent(SDL_Event& e)
 		//Adjust the velocity
 		switch (e.key.keysym.sym)
 		{
-			case SDLK_UP: 
-				mVelY -= DOT_VEL; 
-				break;
-			case SDLK_DOWN: 
-				mVelY += DOT_VEL; 
-				break;
-			case SDLK_LEFT: 
-				mVelX -= DOT_VEL; 
-				break;
-			case SDLK_RIGHT: 
-				mVelX += DOT_VEL; 
-				break;
+		case SDLK_UP:
+			mVelY -= DOT_VEL;
+			break;
+		case SDLK_DOWN:
+			mVelY += DOT_VEL;
+			break;
+		case SDLK_LEFT:
+			mVelX -= DOT_VEL;
+			break;
+		case SDLK_RIGHT:
+			mVelX += DOT_VEL;
+			break;
 		}
 	}
 	//If a key was released
@@ -162,15 +210,13 @@ void Dot::handleEvent(SDL_Event& e)
 		//Adjust the velocity
 		switch (e.key.keysym.sym)
 		{
-			case SDLK_UP: mVelY += DOT_VEL; break;
-			case SDLK_DOWN: mVelY -= DOT_VEL; break;
-			case SDLK_LEFT: mVelX += DOT_VEL; break;
-			case SDLK_RIGHT: mVelX -= DOT_VEL; break;
+		case SDLK_UP: mVelY += DOT_VEL; break;
+		case SDLK_DOWN: mVelY -= DOT_VEL; break;
+		case SDLK_LEFT: mVelX += DOT_VEL; break;
+		case SDLK_RIGHT: mVelX -= DOT_VEL; break;
 		}
 	}
 }
-
-
 
 FoeDot::FoeDot()
 {

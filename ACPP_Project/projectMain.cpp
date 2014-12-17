@@ -65,29 +65,40 @@ MiniMap mini;
 SDL_Window* miniMapWindow;
 bool updateMini = false;
 bool quitMini = false;
+bool miniChangedWindowState = false;
 std::mutex updateMiniMutex;
 std::mutex updateQuitMiniMutex;
+std::mutex miniChangedWindowStateMutex;
 
 
 void makeMiniMap(){
-	Sleep(200);
-	miniMapWindow = mini.set();
-	bool quit = false;
+	mini.set();
+	Sleep(500);
+	mini.close();
+	//miniMapWindow = mini.set(gWindow);
+	//bool quit = false;
 	
-	while (!quit){
-		updateMiniMutex.lock();
-		if (updateMini){
-			quit = mini.updateMiniMap();	//returns true if close window was pressed
-		}
-		updateMiniMutex.unlock();
-		
-		if (!quit){
-			updateQuitMiniMutex.lock();
-			quit = quitMini;
-			updateQuitMiniMutex.unlock();
-		}
-		
-	}
+	//while (!quit){
+	//	updateMiniMutex.lock();
+	//	if (updateMini){
+	//		quit = mini.updateMiniMap();	//returns true if close window was pressed
+	//	}
+	//	updateMiniMutex.unlock();
+
+	//	miniChangedWindowStateMutex.lock();
+	//	if (miniChangedWindowState){
+	//		mini.showHideMap();
+	//		miniChangedWindowState = false;
+	//	}
+	//	miniChangedWindowStateMutex.unlock();
+	//
+	//	if (!quit){
+	//		updateQuitMiniMutex.lock();
+	//		quit = quitMini;
+	//		updateQuitMiniMutex.unlock();
+	//	}
+	//	
+	//}
 
 }
 
@@ -96,8 +107,9 @@ void makeMiniMap(){
 int main(int argc, char* args[])
 {
 	thread makeMap(makeMiniMap);
-	makeMap.detach();
+	makeMap.join();
 
+	SDL_RaiseWindow(gWindow);
 
 	//SDL_Thread *makeMini = SDL_CreateThread(makeMiniMap, "miniMapThread", 5);
 
@@ -131,26 +143,22 @@ int main(int argc, char* args[])
 						if (e.window.event == SDL_WINDOWEVENT_CLOSE)
 						{
 							quit = true;
-							updateQuitMiniMutex.lock();
-							quitMini = true;
-							updateQuitMiniMutex.unlock();
+							//updateQuitMiniMutex.lock();
+							//quitMini = true;
+							//updateQuitMiniMutex.unlock();
 						}
 					}
-					else if (e.type == SDL_WINDOWEVENT && e.window.windowID != mainWindowID){
-						updateMiniMutex.lock();
-						updateMini = true;
-						updateMiniMutex.unlock();
-					}
-					else if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_m){
-						if (mapIsUp){
-							SDL_HideWindow(miniMapWindow);
-							mapIsUp = false;
-						}
-						else{
-							SDL_ShowWindow(miniMapWindow);
-							mapIsUp = true;
-						}
-					}
+					//else if (e.type == SDL_WINDOWEVENT && e.window.windowID != mainWindowID && e.window.event == SDL_WINDOWEVENT_CLOSE){
+					//	updateMiniMutex.lock();
+					//	updateMini = true;
+					//	updateMiniMutex.unlock();
+					//}
+					//else if (e.key.keysym.sym == SDLK_m && e.type == SDL_KEYDOWN && e.key.repeat == 0){
+					//	miniChangedWindowStateMutex.lock();
+					//	miniChangedWindowState = true;
+					//	miniChangedWindowStateMutex.unlock();
+
+					//}
 					else{
 						//key press event
 						dot.handleEvent(e);
@@ -174,10 +182,10 @@ int main(int argc, char* args[])
 				foe.render();
 				foe1.render();
 				SDL_RenderPresent(gRenderer);
-				if (quit)
-					;//dungeonLevel.destroy();
-				else
-					quit = dead;
+				//if (quit)
+				//	;//dungeonLevel.destroy();
+				//else
+				//	quit = dead;
 			}
 		}
 		//makeMap.join();

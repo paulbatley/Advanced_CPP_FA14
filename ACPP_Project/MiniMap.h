@@ -16,11 +16,14 @@ public:
 	bool init();
 	bool loadMedia();
 	void close();
-	SDL_Window* set();
+	/*SDL_Window* set(SDL_Window*);*/
+	void set();
 	bool updateMiniMap();
+	void showHideMap();
 
 private:
 	int mWindowID;
+	bool isHidden = false;
 };
 
 

@@ -146,6 +146,7 @@ public:
 	Dot();
 
 	//Takes key presses and adjusts the dot's velocity
+	//bool handleEvent(SDL_Event& e, SDL_Window*, bool);
 	void handleEvent(SDL_Event& e);
 
 	//Moves the dot and check collision against tiles
