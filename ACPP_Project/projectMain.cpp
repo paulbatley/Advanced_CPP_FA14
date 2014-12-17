@@ -119,6 +119,9 @@ int main(int argc, char* args[])
 			SDL_Event e;
 			//MAKE THREAD LOCK FOR MAP GENERATION
 			LTimer stepTimer;
+
+			bool mapIsUp = true;
+
 			while (!quit)
 			{
 				//event que
@@ -138,9 +141,15 @@ int main(int argc, char* args[])
 						updateMini = true;
 						updateMiniMutex.unlock();
 					}
-					else if (e.key.keysym.sym == SDLK_m){
-						cout << "M TYPED" << endl;
-						SDL_HideWindow(miniMapWindow);
+					else if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_m){
+						if (mapIsUp){
+							SDL_HideWindow(miniMapWindow);
+							mapIsUp = false;
+						}
+						else{
+							SDL_ShowWindow(miniMapWindow);
+							mapIsUp = true;
+						}
 					}
 					else{
 						//key press event
