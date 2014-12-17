@@ -1,4 +1,8 @@
 #include "Dungeon.h"
+#include <iomanip>
+#include <fstream>
+#include <string>
+#include <sstream>
 
 
 enum Corner { UPPER_LEFT, UPPER_RIGHT, LOWER_LEFT, LOWER_RIGHT };
@@ -61,6 +65,63 @@ void Dungeon::printRoomsMap(){
 		}
 	}
 }
+
+/*
+//prints map showing open doors in rooms
+void Dungeon::printRoomsMap(){
+	for (int i = 0; i < DUNGEON_HEIGHT; i++){
+		for (int level = 0; level < 3; level++){
+			switch (level){
+			case 0:
+				for (int j = 0; j < DUNGEON_WIDTH; j++){
+					if (map[(i*DUNGEON_WIDTH) + j] != NULL){
+						cout << " ";
+						cout << (map[(i*DUNGEON_WIDTH) + j]->up ? "o" : "-");
+						cout << " ";
+					}
+					else{
+						cout << " - ";
+					}
+				}
+				cout << endl;
+				break;
+			case 1:
+				for (int j = 0; j < DUNGEON_WIDTH; j++){
+					if (map[(i*DUNGEON_WIDTH) + j] != NULL){
+						cout << (map[(i*DUNGEON_WIDTH) + j]->left ? "o" : "|");
+						cout << " " << (map[(i*DUNGEON_WIDTH) + j]->right ? "o" : "|");
+					}
+					else{
+						cout << "| |";
+					}
+				}
+				cout << endl;
+				break;
+			case 2:
+				for (int j = 0; j < DUNGEON_WIDTH; j++){
+					if (map[(i*DUNGEON_WIDTH) + j] != NULL){
+						cout << " ";
+						cout << (map[(i*DUNGEON_WIDTH) + j]->down ? "o" : "-");
+						cout << " ";
+					}
+					else{
+						cout << " - ";
+					}
+				}
+				cout << endl;
+				break;
+				cout << endl;
+			}
+
+		}
+	}
+}
+
+*/
+
+
+
+
 
 
 //returns x position from given index of 2D array

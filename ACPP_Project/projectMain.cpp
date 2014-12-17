@@ -96,7 +96,8 @@ int main(int argc, char* args[])
 {
 	thread makeMap(makeMiniMap);
 	makeMap.detach();
-	cout << "Main Window: " << mainWindowID << endl;
+
+	//SDL_Thread *makeMini = SDL_CreateThread(makeMiniMap, "miniMapThread", 5);
 
 	if (!init())
 	{

@@ -8,8 +8,8 @@ and may not be redistributed without written permission.*/
 #include "MiniMap.h"
 
 //Screen dimension constants
-const int mSCREEN_WIDTH = 640;
-const int mSCREEN_HEIGHT = 480;
+const int mSCREEN_WIDTH = 320;
+const int mSCREEN_HEIGHT = 240;
 
 ////Starts up SDL and creates window
 //bool init();
@@ -153,7 +153,7 @@ int MiniMap::set()
 			SDL_UpdateWindowSurface(mgWindow);
 
 			//Wait two seconds
-			SDL_Delay(2000);
+			//SDL_Delay(2000);
 			////Free resources and close SDL
 			//close();
 
@@ -186,7 +186,7 @@ bool MiniMap::updateMiniMap(){
 	SDL_UpdateWindowSurface(mgWindow);
 
 	//Wait two seconds
-	SDL_Delay(2000);
+	//SDL_Delay(2000);
 	return false;
 }
 
