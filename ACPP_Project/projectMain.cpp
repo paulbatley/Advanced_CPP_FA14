@@ -62,12 +62,31 @@ int boardPositionY = SCREEN_HEIGHT;
 //bool hitSuccess(boardMember Attacker);
 
 MiniMap mini;
+bool updateMini = false;
+bool quitMini = false;
+std::mutex updateMiniMutex;
+std::mutex updateQuitMiniMutex;
 
 
 void makeMiniMap(){
 	Sleep(200);
 	mini.set();
-
+	bool quit = false;
+	
+	while (!quit){
+		updateMiniMutex.lock();
+		if (updateMini){
+			quit = mini.updateMiniMap();	//returns true if close window was pressed
+		}
+		updateMiniMutex.unlock();
+		
+		if (!quit){
+			updateQuitMiniMutex.lock();
+			quit = quitMini;
+			updateQuitMiniMutex.unlock();
+		}
+		
+	}
 
 }
 
@@ -106,19 +125,20 @@ int main(int argc, char* args[])
 						if (e.window.event == SDL_WINDOWEVENT_CLOSE)
 						{
 							quit = true;
+							updateQuitMiniMutex.lock();
+							quitMini = true;
+							updateQuitMiniMutex.unlock();
 						}
+					}
+					else if (e.type == SDL_WINDOWEVENT && e.window.windowID != mainWindowID){
+						updateMiniMutex.lock();
+						updateMini = true;
+						updateMiniMutex.unlock();
 					}
 					else{
 						//key press event
 						dot.handleEvent(e);
 					}
-
-					//if (e.type == SDL_QUIT)
-					//{
-					//	quit = true;
-					//}
-					////key press event
-					//dot.handleEvent(e);
 				}
 
 				float timeStep = stepTimer.getTicks() / 1000.f;
@@ -144,6 +164,7 @@ int main(int argc, char* args[])
 					quit = dead;
 			}
 		}
+		//makeMap.join();
 		close(tileSet);
 	}
 

@@ -11,6 +11,8 @@ public:
 	bool loadMedia();
 	void close();
 	int set();
+	bool updateMiniMap();
+
 private:
 	int mWindowID;
 };

@@ -113,42 +113,105 @@ int MiniMap::set()
 		}
 		else
 		{
-			//Main loop flag
-			bool quit = false;
+			//	//Main loop flag
+			//	bool quit = false;
 
-			//Event handler
-			SDL_Event e;
+			//	//Event handler
+			//	SDL_Event e;
 
-			//While application is running
-			while (!quit)
+			//	//While application is running
+			//	while (!quit)
+			//	{
+			//		//Handle events on queue
+			//		while (SDL_PollEvent(&e) != 0)
+			//		{
+			//			//User requests quit
+			//			if (e.type == SDL_WINDOWEVENT && e.window.windowID == mWindowID){
+			//				if (e.window.event == SDL_WINDOWEVENT_CLOSE)
+			//				{
+			//					quit = true;
+			//				}
+			//			}
+
+			//		}
+
+			//		//Apply the image
+			//		SDL_BlitSurface(gHelloWorld, NULL, mgScreenSurface, NULL);
+
+			//		//Update the surface
+			//		SDL_UpdateWindowSurface(mgWindow);
+
+			//		//Wait two seconds
+			//		SDL_Delay(2000);
+			//	}
+			//}
+
+			//Apply the image
+			SDL_BlitSurface(gHelloWorld, NULL, mgScreenSurface, NULL);
+
+			//Update the surface
+			SDL_UpdateWindowSurface(mgWindow);
+
+			//Wait two seconds
+			SDL_Delay(2000);
+			////Free resources and close SDL
+			//close();
+
+			return 0;
+		}
+	}
+	return 0;
+}
+
+
+bool MiniMap::updateMiniMap(){
+	SDL_Event e;
+	if(SDL_PollEvent(&e) != 0)
+	{
+		//User requests quit
+		if (e.type == SDL_WINDOWEVENT && e.window.windowID == mWindowID){
+			if (e.window.event == SDL_WINDOWEVENT_CLOSE)
 			{
-				//Handle events on queue
-				while (SDL_PollEvent(&e) != 0)
-				{
-					//User requests quit
-					if (e.type == SDL_WINDOWEVENT && e.window.windowID == mWindowID){
-						if (e.window.event == SDL_WINDOWEVENT_CLOSE)
-						{
-							quit = true;
-						}
-					}
-
-				}
-
-				//Apply the image
-				SDL_BlitSurface(gHelloWorld, NULL, mgScreenSurface, NULL);
-
-				//Update the surface
-				SDL_UpdateWindowSurface(mgWindow);
-
-				//Wait two seconds
-				SDL_Delay(2000);
+				close();
+				return true;
 			}
 		}
 
-		////Free resources and close SDL
-		close();
-
-		return 0;
 	}
+
+	//Apply the image
+	SDL_BlitSurface(gHelloWorld, NULL, mgScreenSurface, NULL);
+
+	//Update the surface
+	SDL_UpdateWindowSurface(mgWindow);
+
+	//Wait two seconds
+	SDL_Delay(2000);
+	return false;
 }
+
+
+
+
+
+
+
+	//if (e.type == SDL_WINDOWEVENT && e.window.windowID == mWindowID){
+	//	if (e.window.event == SDL_WINDOWEVENT_CLOSE)
+	//	{
+	//		close();
+	//	}
+	//}
+	//else{
+	//		//Apply the image
+	//		SDL_BlitSurface(gHelloWorld, NULL, mgScreenSurface, NULL);
+
+	//		//Update the surface
+	//		SDL_UpdateWindowSurface(mgWindow);
+
+	//		//Wait two seconds
+	//		SDL_Delay(2000);
+	//	
+	//}
+
+//}
