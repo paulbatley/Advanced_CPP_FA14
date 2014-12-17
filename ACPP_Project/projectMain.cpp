@@ -108,7 +108,7 @@ int main(int argc, char* args[])
 {
 	thread makeMap(makeMiniMap);
 	makeMap.join();
-
+	
 	SDL_RaiseWindow(gWindow);
 
 	//SDL_Thread *makeMini = SDL_CreateThread(makeMiniMap, "miniMapThread", 5);

@@ -12,7 +12,7 @@ void Dungeon::printMap(){
 	ofstream file("Dungeon.map");
 	for (int row = 0; row < (DUNGEON_HEIGHT*DUNGEON_WIDTH); row++){
 		cout << (map[row] == NULL ? "0" : "1");
-		file << (map[row] == NULL ? "0" : "1" << " ";
+		file << (map[row] == NULL ? "0" : "1") << " ";
 		if (row != 0 && (row + 1) % DUNGEON_WIDTH == 0) 
 		{
 				cout << "\n";
