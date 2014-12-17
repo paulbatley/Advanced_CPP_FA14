@@ -2,6 +2,12 @@
 #define MINIMAP_H
 
 #include <iostream>
+#include <iomanip>
+#include <fstream>
+#include <string>
+#include <sstream>
+#include "GlobalVar.h"
+using namespace std;
 
 
 class MiniMap{
@@ -10,7 +16,7 @@ public:
 	bool init();
 	bool loadMedia();
 	void close();
-	int set();
+	SDL_Window* set();
 	bool updateMiniMap();
 
 private:

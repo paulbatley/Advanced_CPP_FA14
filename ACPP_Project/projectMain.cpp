@@ -62,6 +62,7 @@ int boardPositionY = SCREEN_HEIGHT;
 //bool hitSuccess(boardMember Attacker);
 
 MiniMap mini;
+SDL_Window* miniMapWindow;
 bool updateMini = false;
 bool quitMini = false;
 std::mutex updateMiniMutex;
@@ -70,7 +71,7 @@ std::mutex updateQuitMiniMutex;
 
 void makeMiniMap(){
 	Sleep(200);
-	mini.set();
+	miniMapWindow = mini.set();
 	bool quit = false;
 	
 	while (!quit){
@@ -96,6 +97,7 @@ int main(int argc, char* args[])
 {
 	thread makeMap(makeMiniMap);
 	makeMap.detach();
+
 
 	//SDL_Thread *makeMini = SDL_CreateThread(makeMiniMap, "miniMapThread", 5);
 
@@ -135,6 +137,10 @@ int main(int argc, char* args[])
 						updateMiniMutex.lock();
 						updateMini = true;
 						updateMiniMutex.unlock();
+					}
+					else if (e.key.keysym.sym == SDLK_m){
+						cout << "M TYPED" << endl;
+						SDL_HideWindow(miniMapWindow);
 					}
 					else{
 						//key press event

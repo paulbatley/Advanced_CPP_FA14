@@ -8,8 +8,8 @@ and may not be redistributed without written permission.*/
 #include "MiniMap.h"
 
 //Screen dimension constants
-const int mSCREEN_WIDTH = 320;
-const int mSCREEN_HEIGHT = 240;
+const int mSCREEN_WIDTH = 10*40;
+const int mSCREEN_HEIGHT = 5*40;
 
 ////Starts up SDL and creates window
 //bool init();
@@ -60,7 +60,6 @@ bool MiniMap::init()
 
 		//Grab window identifier 
 		mWindowID = SDL_GetWindowID( mgWindow );
-		std::cout << "MiniMap ID: " << mWindowID << std::endl;
 	}
 	//	}
 
@@ -97,7 +96,7 @@ void MiniMap::close()
 	//SDL_Quit();
 }
 
-int MiniMap::set()
+SDL_Window* MiniMap::set()
 {
 	//Start up SDL and create window
 	if (!init())
@@ -157,10 +156,10 @@ int MiniMap::set()
 			////Free resources and close SDL
 			//close();
 
-			return 0;
+			return mgWindow;
 		}
 	}
-	return 0;
+	return mgWindow;
 }
 
 
