@@ -63,56 +63,27 @@ int boardPositionY = SCREEN_HEIGHT;
 
 MiniMap mini;
 SDL_Window* miniMapWindow;
-bool updateMini = false;
-bool quitMini = false;
-bool miniChangedWindowState = false;
-std::mutex updateMiniMutex;
-std::mutex updateQuitMiniMutex;
-std::mutex miniChangedWindowStateMutex;
+
 
 
 void makeMiniMap(){
+
 	mini.set();
 	Sleep(500);
 	mini.close();
-	//miniMapWindow = mini.set(gWindow);
-	//bool quit = false;
-	
-	//while (!quit){
-	//	updateMiniMutex.lock();
-	//	if (updateMini){
-	//		quit = mini.updateMiniMap();	//returns true if close window was pressed
-	//	}
-	//	updateMiniMutex.unlock();
-
-	//	miniChangedWindowStateMutex.lock();
-	//	if (miniChangedWindowState){
-	//		mini.showHideMap();
-	//		miniChangedWindowState = false;
-	//	}
-	//	miniChangedWindowStateMutex.unlock();
-	//
-	//	if (!quit){
-	//		updateQuitMiniMutex.lock();
-	//		quit = quitMini;
-	//		updateQuitMiniMutex.unlock();
-	//	}
-	//	
-	//}
-
 }
-
-//bool hitSuccess(boardMember Attacker);
 
 int main(int argc, char* args[])
 {
-	thread makeMap(makeMiniMap);
-	makeMap.join();
-	
-	SDL_RaiseWindow(gWindow);
+	//open the splash screen -- enjoy :)
+	thread makemap(makeMiniMap);
+	makemap.join();
 
-	//SDL_Thread *makeMini = SDL_CreateThread(makeMiniMap, "miniMapThread", 5);
+	//set console window position
+	HWND consoleWindow = GetConsoleWindow();
+	SetWindowPos(consoleWindow, 0, 345, 375, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 
+	//start SDL
 	if (!init())
 	{
 		std::cout << "Initialization failed!" << std::endl;
@@ -129,46 +100,37 @@ int main(int argc, char* args[])
 			bool quit = false;
 			bool dead = false;
 			SDL_Event e;
-			//MAKE THREAD LOCK FOR MAP GENERATION
 			LTimer stepTimer;
 
 			bool mapIsUp = true;
-
+			//main game loop
 			while (!quit)
 			{
 				//event que
 				while (SDL_PollEvent(&e) != 0)
 				{
+					//user requests quit
 					if (e.type == SDL_WINDOWEVENT && e.window.windowID == mainWindowID){
 						if (e.window.event == SDL_WINDOWEVENT_CLOSE)
 						{
 							quit = true;
-							//updateQuitMiniMutex.lock();
-							//quitMini = true;
-							//updateQuitMiniMutex.unlock();
 						}
+						SDL_RaiseWindow(gWindow);
 					}
-					//else if (e.type == SDL_WINDOWEVENT && e.window.windowID != mainWindowID && e.window.event == SDL_WINDOWEVENT_CLOSE){
-					//	updateMiniMutex.lock();
-					//	updateMini = true;
-					//	updateMiniMutex.unlock();
-					//}
-					//else if (e.key.keysym.sym == SDLK_m && e.type == SDL_KEYDOWN && e.key.repeat == 0){
-					//	miniChangedWindowStateMutex.lock();
-					//	miniChangedWindowState = true;
-					//	miniChangedWindowStateMutex.unlock();
-
-					//}
 					else{
 						//key press event
 						dot.handleEvent(e);
 					}
+					
 				}
-
+				//set timer for movement
 				float timeStep = stepTimer.getTicks() / 1000.f;
+				//move the player
 				dead = dot.move(tileSet, timeStep);
+				//move the enemies
 				foe.move(tileSet, timeStep);
 				foe1.move(tileSet, timeStep);
+				//starts the timer
 				stepTimer.start();
 				//Clear screen
 				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
@@ -178,35 +140,27 @@ int main(int argc, char* args[])
 				{
 					tileSet[i]->render();
 				}
+				//render the board members
 				dot.render();
 				foe.render();
 				foe1.render();
+				//render the window
 				SDL_RenderPresent(gRenderer);
-				//if (quit)
-				//	;//dungeonLevel.destroy();
-				//else
-				//	quit = dead;
+				SDL_RaiseWindow(gWindow);
+				//check if player perishes
+				if (quit)
+					;
+				else
+					quit = dead;
 			}
 		}
-		//makeMap.join();
+		//closes SDL
 		close(tileSet);
 	}
 
 	//system("pause");
 	return 0;
 }
-//
-//bool hitSuccess(boardMember Attacker)
-//{
-// bool hit = false;
-// std::default_random_engine generator;
-// std::uniform_int_distribution<int> distribution(0, 3);
-// if (distribution(generator) != Attacker.getLevel() % 4)
-// hit = true;
-//
-// return hit;
-//
-//}
 bool init()
 {
 	//Initialization flag
@@ -225,7 +179,7 @@ bool init()
 			std::cout << "Warning: Linear texture filtering not enabled!" << std::endl;
 		}
 		//Create window
-		gWindow = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+		gWindow = SDL_CreateWindow("Dungeon Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 		if (gWindow == NULL)
 		{
 			std::cout << "Window could not be created! SDL Error:" << SDL_GetError() << std::endl;
@@ -255,15 +209,17 @@ bool init()
 					success = false;
 				}
 			}
+			SDL_RaiseWindow(gWindow);
 		}
 	}
+	SDL_RaiseWindow(gWindow);
 	return success;
 }
 bool loadMedia(Tile* tiles[])
 {
 	//Loading success flag
 	bool success = true;
-	//Load dot texture
+	//Load dot textures
 	if (!gDotTexture.loadFromFile("dot.bmp"))
 	{
 		printf("Failed to load dot texture!\n");
@@ -388,16 +344,24 @@ bool Dot::move(Tile *tiles[], float timeStep)
 {
 	bool hitsFoe = checkCollision(foe.getBox(), mBox);
 	if (hitsFoe)
-	if (dot.getHP() > 0)
+	if (dot.getHP() > 1)
 		dot.decHP(1);
-	else
+	else if (dot.getHP() <= 1)
+	{
+		std::cout << "YOU ARE DEAD!" << std::endl;
+		system("pause");
 		return true;
+	}
 	bool hitsFoe1 = checkCollision(foe1.getBox(), mBox);
 	if (hitsFoe1)
-	if (dot.getHP() > 0)
+	if (dot.getHP() > 1)
 		dot.decHP(1);
-	else
+	else if (dot.getHP() <= 1)
+	{
+		std::cout << "YOU ARE DEAD!" << std::endl;
+		system("pause");
 		return true;
+	}
 	int wallTouched;
 	//Move the dot left or right
 	mPosX += mVelX * timeStep;
@@ -436,7 +400,7 @@ void FoeDot::move(Tile *tiles[], float timeStep)
 		turnLock(tiles);
 	mPosX += mVelX * timeStep;
 	//If the dot went too far to the left or right
-	if (mPosX < 0 || mPosX > SCREEN_WIDTH - DOT_WIDTH)
+	if (mPosX < TILE_WIDTH || mPosX > SCREEN_WIDTH - DOT_WIDTH - TILE_WIDTH)
 	{
 		mVelX -= mVelX * 2;
 		mPosX += mVelX * timeStep;
@@ -454,7 +418,7 @@ void FoeDot::move(Tile *tiles[], float timeStep)
 	//Move the dot up or down
 	mPosY += mVelY * timeStep;
 	//If the dot went too far up or down
-	if (mPosY < 0 || mPosY > SCREEN_HEIGHT - DOT_HEIGHT)
+	if (mPosY < TILE_HEIGHT || mPosY > SCREEN_HEIGHT - DOT_HEIGHT - TILE_HEIGHT)
 	{
 		mVelY -= mVelY * 2;
 		mPosY += mVelY * timeStep;
@@ -533,6 +497,7 @@ int touchesWall(SDL_Rect box, Tile* tiles[])
 						foe.setBoxX(120);
 						foe.setBoxY(40);
 						lockDoor(tiles);
+						dot.incHP(2);
 					}
 					return TILE_UPDOOR;
 					break;
@@ -545,6 +510,7 @@ int touchesWall(SDL_Rect box, Tile* tiles[])
 						foe.setBoxX(120);
 						foe.setBoxY(40);
 						lockDoor(tiles);
+						dot.incHP(2);
 					}
 					return TILE_LEFTDOOR;
 					break;
@@ -557,6 +523,7 @@ int touchesWall(SDL_Rect box, Tile* tiles[])
 						foe.setBoxX(120);
 						foe.setBoxY(40);
 						lockDoor(tiles);
+						dot.incHP(2);
 					}
 					return TILE_RIGHTDOOR;
 					break;
@@ -569,6 +536,7 @@ int touchesWall(SDL_Rect box, Tile* tiles[])
 						foe.setBoxX(120);
 						foe.setBoxY(40);
 						lockDoor(tiles);
+						dot.incHP(2);
 					}
 					return TILE_BOTTOMDOOR;
 					break;
